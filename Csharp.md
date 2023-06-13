@@ -1,7 +1,7 @@
 ## 14. What are generics in C#.NET
-* a feature that allows you to create reusable code by parameterizing classes, methods, and other constructs with one or more types. 
+* a feature that allows you to create `reusable code` by parameterizing classes, methods, and other constructs with one or more types
 * Generics are commonly used in collections to create flexible and type-safe data structures
-
+ 
 ## 15. "Nullable" type in C#
 * Nullable<T> type allows to assign null values to value types.
 * only be used with value types and structs, not reference types
@@ -143,4 +143,4 @@ using System.IO;
 * is used for **`namespace import`**
 * It allows you to bring `types and members` from a `particular namespace` into your code file
 * making them accessible without fully qualifying their names. 
-* used at the beginning of a file or within a namespace scope.
+* used at the beginning of a file or within a namespace scope

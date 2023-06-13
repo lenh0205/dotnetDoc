@@ -6,38 +6,80 @@
 * Entity Framework enables you to define your application's `data model` using classes and relationships, and it takes care of `mapping` these entities to the database tables, performing `CRUD` operations, and managing the underlying `database connections`
 
 ### Briefly present Lazy Loading, Eager Loading, Explicit Loading in Entity Framework
+```VD: User with Order is one-to-many
+public class User
+{
+    public int Id { get; set; }
+
+    public virtual ICollection<Order> Orders { get; set; }
+}
+public class Order
+{
+    public int Id { get; set; }
+
+    public int UserId { get; set; }
+    public virtual User User { get; set; }
+}
+```
 
 #### Lazy Loading: 
 * `Related entities` are loaded from the database **`on-demand`** when `accessed for the first time`
 
 * optimize performance by reducing the amount of data retrieved from the database upfront
-* However, additional database queries need to executed if related data is accessed multiple times
+* may lead to additional database queries if not used carefully
 ```
-User usr = dbContext.Users.FirstOrDefault(a => a.UserId == userId);
-
-// UserDetails chỉ load khi gọi nó 
-UserDetails ud = usr.UserDetails;
+var user = dbContext.Users.FirstOrDefault(u => u.Id == 1);
+var orders = user.Orders; //The orders are loaded from the database at this point
 ```
 
 #### Eager Loading
-* `Related entities` are fetched from the database **`in a single query`** along with the main entity
+* `Related entities` are loaded from the database **`in a single query`** along with the main entity
 * By specifying the `navigation properties` to be included using the **`Include`** method or by using the Include extension method
 
-* reduces the number of queries -> suitable when we'll need the related data
+* minimize the number of database round-trips (useful when we know we'll need the related data)
 ```
-// UserDetails được load ngay trong 1 câu query cùng với Users
-User usr = dbContext.Users.Include(a => a.UserDetails).FirstOrDefault(a => a.UserId == userId);
+var user = dbContext.Users.Include(u => u.Orders).FirstOrDefault(u => u.Id == 1);
+var orders = user.Orders;  // The orders are already loaded along with the user in a single query
 ```
 
 #### Explicit Loading: 
 * `control over when and which related entities are loaded`
 * use the **`Load`** method (with Reference or Collection) on a navigation property when needed
-* 2 way of using Load method
 
-* _load related entities on demand but in a more controlled manner compared to Lazy Loading_
+* useful for deferring the loading of certain related data until it is explicitly requested
+* _explicit ở đây tức là khi nào load thì hãy nói rõ bằng việc s/d method Load()_
 ```
-User usr = dbContext.Users.FirstOrDefault(a => a.UserId == userId);  
-dbContext.Entry(usr).Reference(usr => usr.UserDetails).Load();
+var user = dbContext.Users.FirstOrDefault(u => u.Id == 1);
+dbContext.Entry(user).Collection(u => u.Orders).Load();  // Explicitly load the orders for the user
+var orders = user.Orders;  // The orders are now loaded for the user
+```
+
+### Problem (using Lazy loading)
+```
+var users = dbContext.Users.ToList(); // Lazy loading
+foreach (var user in users)
+{
+    // access "user.Orders" in here
+}
+// each user in foreach loop, a separate database query will be executed to load the orders
+```
+
+* fix with `Eager Loading`
+```
+var users = dbContext.Users.Include(u => u.Orders).ToList();
+...
+```
+
+* fix with `Explicit loading` 
+```
+var users = dbContext.Users.ToList();
+foreach (var user in users)
+{
+    // Explicitly load the orders for the current user
+    dbContext.Entry(user).Collection(u => u.Orders).Load();
+
+    // access "user.Orders" in here 
+}
 ```
 
 ## 17. Cách tối ưu khi dùng SQL
@@ -184,3 +226,13 @@ finally
 * Now, the `source collection` is enumerated over. For every source item, we will run the `predicate` (as we are in a .Where() method), and if the predicate is matched, set the `Current` item the foreach-generated enumeration picks up as well as return true. If the predicate does not match, we skip the item.
 * Imagine the whole process as a stream. The source enumeration returns an item, then pauses. Then, our enumeration works on that item, and returns it to the top-most caller in the chain. Once the caller is done, we will move to the next item, and essentially pass this call all the way down to the source collection the LINQ query operates on (_It is important to understand that this “stream” can act over a lot of layers_)
 * For every matched item, we output the matching string to the Console.
+
+# Types of Entities in Entity Framework
+## POCOs - Plain Old CLR Objects
+* The classes that we create in Model folder, are called `POCOs`
+* contain only the state and behavior of the application and they don’t have the persistence logic of the application
+* The main benefits of POCO's are really used when you start to use things like the repository pattern, ORM's and dependency injection
+
+* VD: when we create an ORM (let's say EF) which pulls back data from somewhere (db, web service, etc.), then passes this data into objects (POCO's). Then if one day we decide to switch over to nHibernate from EF, we should not have to touch your POCO's at all, the only thing that should need to be changed is the ORM
+
+## Dynamic Proxy Entities (POCO Proxy)

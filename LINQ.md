@@ -178,14 +178,16 @@ var orders = context.Orders.Include(o => o.Customer).ToList();
 * with large datasets or remote databases, it minimizes the number of times application needs to communicate with the database, reducing network latency and overhead.
 
 ## IQueryable vs IEnumerable 
-* In most cases, you'll be working with IQueryable in Entity Framework, as it provides better performance by pushing the query execution to the database server
+* In most cases, you'll be working with IQueryable in Entity Framework (querying against a database using LINQ to Entities)
+* provides better performance by pushing the query execution to the database server
+
 * IEnumerable is used for querying in-memory collections or when the data source is already loaded
 * DbSet<T> / DbContext.Set<T> is IQueryable<T> object / `IQueryable data source`
 
 ### IQueryable
 * The `IQueryable` interface represents a **`queryable data source`** (System. Linq)
 * IQueryable inherit IEnumerable -> possesses all features of IEnumerable
-* It is commonly used when querying against a database using LINQ to Entities (Entity Framework)
+
 * `Deferred execution` is not possible
 * support `lazy loading`
 * Custom queries are supported with the help of CreateQuery as well as Execute methods
@@ -203,11 +205,11 @@ var result = query.ToList();
 ### IEnumerable
 * The IEnumerable interface represents a **`sequence of elements that can be enumerated`** (System. Collections)
 * It is the base interface for all collections in .NET
+
 * Supports `deferred execution`
 * does not support `lazy loading`
 * Custom queries are not supported
-* use case: **`read-only collections`**; read objects in the forward direction only without concern about thread safety;
-querying data from Lists, Arrays, and other in-memory collections
+* use case: **`in-memory collections`**; read objects in the forward direction only without concern about thread safety;
 
 * In the course of querying data from databases
 * -> IEnumerable executes by selecting query on the server-side 
@@ -232,7 +234,7 @@ var result = query.ToList();
 * 3 types: Immediate Query Execution, Deferred Execution (streaming or non-streaming)
 
 * Search `"Classification Table"` để xem Query operation đó thuộc Execution type nào
-* chắng hạn As a rule of thumb, if the LINQ method `returns an abstract type` (e.g., IEnumerable), it'sd probably using `deferred execution`
+* chắng hạn if the LINQ method `returns an abstract type` (e.g., IEnumerable), it'sd probably using `deferred execution` as a rule of thumb
 
 ## Query evaluation
 * Query evaluation can happen in the client-side (e.g., your program) or the server-side (e.g., in a database)
@@ -257,7 +259,7 @@ foreach (var item in filteredList)
 * **`chain`** a `query method operator` that **`requires access to data`** such as (can be more):
 * **ToList()** - forces immediate query evaluation and returns a List
 * **First()** - forces immediate query evaluation and returns the first entry of type T in the IEnumerable
-
+ 
 ## Deferred Query Execution
 * no data source is accessed until we **`force the LINQ query to be evaluated`**
 * Deferred execution is available in C# by using: **`yield return`**

@@ -22,8 +22,7 @@
 
 ## Transaction and ACID propterties
 ### Transaction
-* `Transaction` refers to a `logical unit of work` that consists of `mutiple operations` performed on a `database`
-*  A `Transaction` groups multiple database operations (insert, update, delete,...) into a `single indivisible unit`
+* `Transaction` refers to a `logical unit of work` that consists of `mutiple operations` performed on a `database` (insert, update, delete,...)
 
 * Ensure data **`integrity and consistency`** within a database (data modifications, safeguarding against errors, system failures, and concurrent access issues that may arise in a database environment)
 * guarantees that a `set of related operations` either succeeds as a whole or fails as a whole
@@ -49,8 +48,9 @@
 * The Unit of Work object is responsible for initiating database operations, tracking changes, and committing or rolling back the transaction
 ### Repository
 * The Repository pattern is a design pattern that provides `an abstraction layer` between DAL (the data access logic) and Business (Business Service Layer)
-* encapsulate the data access operations, provide a consistent interface for working with data entities, and promote separation of concerns
-* The Repository pattern involves creating interfaces or classes that define the operations to be performed on data entities. 
+
+* encapsulate the `data access operations`, provide a consistent interface (or classes) define the operations for working with data entities (promote separation of concerns)
+
 * interfaces provide a contract for the application to interact with the database without exposing the underlying implementation details (querying the database, updating records)
 
 

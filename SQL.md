@@ -1,6 +1,7 @@
 ## index
-* an **`index`** is a `database structure` that improves the performance of queries by `allowing faster data retrieval` 
-* an index is **`created on one or more columns`** of a table and contains a `sorted copy of the data` from those columns 
+* an **`index`** is a `on-disk structure` associated with a table or view that `speeds retrieval of rows` from the table or view
+* An index contains `keys` built from one or more columns in the table or view. 
+* These keys are stored in a structure (B-tree) -> find the row or rows associated with the key values quickly and efficiently
 
 ### Mechanism
 * avoid scanning the entire table when executing queries with search conditions
@@ -24,6 +25,7 @@
 #### B-tree index
 * organizes data in a **`balanced tree structure`** and is efficient for range-based queries
 * each node contains multiple keys and pointers to child nodes
+
 * are widely used in relational databases and support efficient data insertion and deletion
 
 #### Hash index
@@ -35,14 +37,20 @@
 * Clustered Index, Non-clustered Index, and Unique Index,... are implementations of the B-tree index structure
 
 #### Clustered Index: 
-* determines the `physical order of data` in a table
-* Each table can have `only one` clustered index, and it defines the storage order of the data rows
+* **`sort`** and store the data rows in the table (or view) based on their `key values` (_the columns included in the index definition_)
+
+* Each table can have `only one` clustered index (_because the data rows themselves can be stored in only one order_)
+* If a table has no clustered index, its data rows are stored in an unordered structure called a **`heap`**
 * `By default`, primary key constraints create clustered indexes
 ```
 CREATE CLUSTERED INDEX IX_Employee_ID ON Employee (EmployeeID);
 ```
 #### Non-Clustered Index: 
-* creates a `separate structure` that contains the indexed column's values and a pointer to the corresponding data row
+*  have a structure `separate` from the data rows. 
+* A nonclustered index contains the `nonclustered index key values`
+* each _key value entry_ has a **`pointer to the data row`** that contains the key value
+
+* The pointer from an index row in a nonclustered index to a data row is called a **`row locator`**
 * A table can have `multiple` non-clustered indexes to improve the performance of different queries
 ```
 CREATE NONCLUSTERED INDEX IX_Employee_LastName ON Employee (LastName);
@@ -163,7 +171,7 @@ END;
 
 ## 20. Group by dùng để làm gì ?
 
-## 21. phân biệt UNION, MINUS, UNION ALL, INTERSECT ?
+## 21. UNION, UNION ALL, MINUS,  INTERSECT ?
 ###  UNION - UNION ALL
 * `UNION` operator used to combine the result-set of two or more SELECT statements; selects only distinct values
 * `UNION ALL` - like UNION but allow duplicate values 
@@ -175,8 +183,10 @@ END;
 * returns all the records in the first SELECT query that are not returned by the second SELECT query
 
 ## Database Schema in SQL Server
-* a `logical collection of database objects` such as _tables, views, stored procedures, indexes, triggers, functions_
-* It can be thought of as a container, created by a database user
+* a `a list of logical structures of data` (_tables, views, stored procedures, indexes, triggers, functions_)
+* a  schema is an individual entity (container of objects) distinct from the user who constructs the object
+
+ v * -> Schemas may be assigned security permissions -> an effective method for distinguishing and defending database objects based on user access privileges
 
 ### feature
 * A schema can belong to only `one database` whereas a database can have one or `multiple schemas`
@@ -213,7 +223,7 @@ HAVING COUNT(CustomerID) > 5;
 
 * The LEFT JOIN keyword returns all records from the left table (table1), and the matching records from the right table (table2) (The result is 0 records from the right side, if there is no match)
 
-## 25. Viêt ra một câu mẫu cú pháp Insert Delete Update  trong SQL ?
+## 25. Viêt ra một câu mẫu cú pháp Insert Delete Update trong SQL ?
 ```
 INSERT INTO Customers (CustomerName, ContactName, Address)
 VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21');
@@ -230,6 +240,7 @@ WHERE CustomerID = 1;
 ## 26. CHAR And VARCHAR Data Types In SQL Server 
 ### CHAR
 * store `characters` of a **`fixed length`** - CHAR always `reserves a fixed amount of storage space, regardless of the actual length of the stored string`
+
 * The storage size is specified in terms of characters
 * If the stored string is `shorter` than the defined length, it is `padded` with `spaces` to fill the remaining space
 * If the stored string is `longer` than the defined length, it will get `truncate or error`
@@ -242,6 +253,7 @@ WHERE CustomerID = 1;
 ```
 ### VARCHAR
 * store `characters` of **`variable length`** - VARCHAR dynamically `adjusts the storage space based on the actual length of the stored string`
+
 * The storage size is specified in terms of characters
 * `No padding` is applied to the stored string
 

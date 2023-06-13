@@ -23,11 +23,12 @@
 ## 3. what is middleware
 * a component or software layer that sits between the server and the application
 * acts as a bridge, processing and manipulating the incoming HTTP requests and outgoing responses
+## Pipeline in MVC
 
 
 ## 9. Nuget package 
-* **`NuGet`** is a package manager for the Microsoft development platform, primarily used in conjunction with the .NET Framework and .NET Core.
-* **`A NuGet package`** is a way to distribute and share code components with other developers - contains compiled code (assemblies), along with other related files, such as configuration files, documentation, and content files.
+* **`NuGet`** is a package manager for the Microsoft development platform, primarily used in conjunction with the .NET Framework and .NET Core
+* **`A NuGet package`** is a way to distribute and share code components with other developers - contains compiled code (assemblies) along with other related files (_such as configuration files, documentation, and content files_)
 
 ## Import export excel - PDF xài thư viện gì ?
 * EPPlus, iTextSharp
