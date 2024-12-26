@@ -177,6 +177,7 @@ var orders = context.Orders.Include(o => o.Customer).ToList();
 
 * with large datasets or remote databases, it minimizes the number of times application needs to communicate with the database, reducing network latency and overhead.
 
+
 ## IQueryable vs IEnumerable 
 * In most cases, you'll be working with IQueryable in Entity Framework (querying against a database using LINQ to Entities)
 * provides better performance by pushing the query execution to the database server
@@ -220,6 +221,14 @@ var result = query.ToList();
 IEnumerable<Customer> customers = GetCustomers();
 var result = customers.Where(c => c.Age > 25).ToList();
 ```
+
+# 'IQueryable' and 'Deferred Execution'
+* -> **`IQueryable`** is **a key interface** in LINQ that **supports deferred execution**
+* -> **EF constructs a query** as **`an expression tree`** and does not execute it immediately
+* -> **`Deferred execution`** means that the query is not executed against the database when it is defined but only when it is iterated over or explicitly executed
+
+=====================================================================
+> phần này sẽ xem sau
 
 ### if replace IQueryable with IEnumerable
 ```

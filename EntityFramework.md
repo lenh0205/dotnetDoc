@@ -6,7 +6,7 @@
 * Entity Framework enables you to define your application's `data model` using classes and relationships, and it takes care of `mapping` these entities to the database tables, performing `CRUD` operations, and managing the underlying `database connections`
 
 ### Briefly present Lazy Loading, Eager Loading, Explicit Loading in Entity Framework
-```VD: User with Order is one-to-many
+```cs - VD: User with Order is one-to-many
 public class User
 {
     public int Id { get; set; }

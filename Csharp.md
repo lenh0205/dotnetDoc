@@ -1,3 +1,7 @@
+## 3. Different between class, struct, record ?
+
+## 4. what is 'indexer' ?
+
 ## 14. What are generics in C#.NET
 * a feature that allows you to create `reusable code` by parameterizing classes, methods, and other constructs with one or more types
 * Generics are commonly used in collections to create flexible and type-safe data structures
@@ -27,39 +31,44 @@ int value = myNullableInt ?? 1;   // value will be "1" since myNullableInt is nu
 ```
 * `Static Nullable class` is a helper class to compare nullable types
 
-##  store collections of objects
-* **`System.Collections.Generic`**
-* **`System.Collections`**
+## IEnumerable
 * **`System.Collections.Concurrent`**
 
-1. System.Collections
-* **`non-generic collections`** 
-* each element can represent a value of a different type
-* collection size is not fixed 
-* Elements can be added / removed at runtime
+### Collections
+* -> https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/collections
+* -> most collections support adding or removing elements dynamically; notably, **`Array`**, **`System.Span<T>`**, and **`System.Memory<T>`** don't
 
-2. System.Collections.Generic
-* **`Generic Collections`** 
-* `Specific type / type safety`
-* Array Size is not fixed 
-* Elements can be added / removed at runtime
+#### Indexable collections
 
-3. System.Collections.Concurrent
+#### Key/value pair collections
+
+#### Iterators
+
+#### System.Collections.Concurrent
 * help to achieve **`thread-safe`** code
 * ConcurrentStack<T> , ConcurrentQueue<T> , ConcurrentDictionary<TKey,TValue>
 
 ### Array
-* An array is a fixed-size collection 
+
+#### Single-dimensional arrays
+* an array is a fixed-size collection 
 * have specific type
-* Once an array is declared, its size and type cannot be changed
 
-### ArrayList
-* Non-generic collection
+#### Multidimensional arrays
 
-### List - The List<T> 
-* Generic collection
-* provides an **`ordered collection`** of elements with efficient `indexed access`
-* provides `additional methods` for sorting, reversing, and manipulating the list
+#### Jagged arrays
+
+#### Implicitly typed arrays
+
+### ArrayList (legacy)
+* -> giống mảng nhưng **`size không cố định`** 
+* -> các phần tử đều sẽ được lưu với kiểu là **`object`**
+* => nên có thể thêm, xoá, sửa phần tử với các kiểu khác nhau; nhưng không thể support LINQ queries
+
+### List<T> 
+* ->  **`a generic collection`**
+* -> ensuring **`type safety`** at compile time
+* -> hỗ trợ nhiều tính năng
 
 ### Collection<T>
 * Generic collection
@@ -119,17 +128,17 @@ int value = myNullableInt ?? 1;   // value will be "1" since myNullableInt is nu
 * particularly with objects that implement the **`IDisposable`** interface 
 * ensures that the `resources allocated to an object` are properly `released and disposed` of when they are no longer needed, even if an exception is thrown during the execution of the code
 
-## Mechanism
+### Mechanism
 * It allows you to create a **`block of code`** where the object is instantiated and used
-* **`Dispose method`** is `automatically called` when exiting the block (by reaching the `end of the block` or an `exception` being thrown)
+* **`Dispose() method`** is `automatically called` when exiting the block (by reaching the `end of the block` or an `exception` being thrown)
 
-```
+```cs
 using (FileStream fileStream = new FileStream("data.txt", FileMode.Open))
 {
     // Use the fileStream object to read data from the file
     // ...
 }
-    // The fileStream object is no longer in scope and has been properly disposed
+// The fileStream object is no longer in scope and has been properly disposed
 ```
 
 ### IDisposable 
