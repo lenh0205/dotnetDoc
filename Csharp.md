@@ -33,6 +33,8 @@ int value = myNullableInt ?? 1;   // value will be "1" since myNullableInt is nu
 
 ## 2. Boxing and Unboxing ?
 
+## 3. 'string' is reference type or value type?
+
 ## 1. IEnumerable
 * **`System.Collections.Concurrent`**
 
