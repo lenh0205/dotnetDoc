@@ -31,6 +31,8 @@ int value = myNullableInt ?? 1;   // value will be "1" since myNullableInt is nu
 ```
 * `Static Nullable class` is a helper class to compare nullable types
 
+## 16. Anonymous type in C#? 
+
 ## 2. Boxing and Unboxing ?
 
 ## 3. 'string' is reference type or value type?
