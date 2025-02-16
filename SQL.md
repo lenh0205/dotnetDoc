@@ -68,6 +68,55 @@ CREATE UNIQUE INDEX IX_Employee_Email ON Employee (Email);
 CREATE INDEX IX_Employee_Active ON Employee (EmployeeID) WHERE IsActive = 1;
 ```
 
+## 6. ACID
+* -> **`Atomicity`** - Everything happens fully or not at all.
+* -> **`Consistency`** - The database stays correct before and after the transaction.
+* -> **`Isolation`** - Transactions don’t interfere with each other.
+* -> **`Durability`** - Once saved, data is permanent, even if the system crashes
+
+## 5. Transaction
+* -> is a group of operations that must be executed together; 
+* -> if something goes wrong (like a system crash), **`both steps must be undone (rolled back) to keep the database correct`**
+* -> a transaction follows **`ACID rules`**
+
+## 3. Transaction Isolation
+* -> since multiple users run transactions at the same time 
+* -> SQL provides **isolation levels** to **`control how transactions affect each other`**
+
+### the main isolation levels
+* -> **`READ UNCOMMITTED`** (the lowest level) - transactions can read uncommitted data (risky!)
+* -> **`READ COMMITTED`** (default in SQL Server) transactions only see committed data (safer)
+* -> **`REPEATABLE READ`** - prevents changes to rows that a transaction is reading
+* -> **`SERIALIZABLE`** (the strictest level) - prevents new inserts or changes until a transaction is done
+
+## 2. a 'Lock'
+* -> is a way **SQL Server protects data** when **`multiple users are reading/writing at the same time`**
+
+* -> **`Shared Lock (S)`** - used when reading data (so other users can also read, but not change it)
+* -> **`Exclusive Lock (X)`** - used when modifying data (no one else can read or write)
+* -> **`Update Lock (U)`** - used before updating a row
+
+## 4. Table Hint
+* -> is a special **instruction** that **`changes how SQL locks or reads data`**
+
+* -> one example is WITH (NOLOCK)
+
+## 1. 'WITH(NOLOCK)' in SQL Server
+* -> https://stackoverflow.com/questions/686724/what-is-with-nolock-in-sql-server
+* -> tells SQL **`not to use shared locks when reading data`**
+* _is the equivalent of using READ UNCOMMITED as a transaction isolation level_
+
+* -> this **`makes queries faster`** because they don't wait for other transactions to finish
+* -> but it also means we **`can read uncommitted (incorrect) data`**
+
+* => we might see **`data that never actually existed`** (if another transaction rolls back)
+* => we might see **`duplicate or missing rows`** if a transaction is updating data while you read it
+
+* => it is not safe for applications where **data accuracy is important**
+* => useful for reporting or analytics where **speed matters more than accuracy**
+
+* _Ex: in banking applications with high transaction rates, this is dangerous because we might show an incorrect balance or process a wrong transaction_
+
 ## View:
 * A view is a `virtual table` derived from a SQL query
 * It allows you to `encapsulate complex queries` or commonly used query logic into a named object
@@ -97,10 +146,74 @@ BEGIN
 END;
 ```
 
+## 'Store procedures' vs 'Function'
+
+* **user-defined functions (UDFs)** 
+* -> must return a **`computed values`** - a **scalar value** (_can be used inline in SQL statements like SELECT, other procedure, function_) or a **result set** (_can be joined upon_)
+* -> **`cannot perform permanent environmental changes`** (must read-only) to SQL Server (i.e., no INSERT or UPDATE statements allowed)
+* **Note**: we can still  declare and INSERT (UPDATE and DELETE is not allowed) data into a table variable inside a function
+
+```sql - Ex:
+-- define
+CREATE FUNCTION dbo.CalculateTotalPrice(@price DECIMAL(10,2), @taxRate DECIMAL(5,2))  
+RETURNS DECIMAL(10,2)  
+AS  
+BEGIN  
+    RETURN @price + (@price * @taxRate / 100);  
+END;
+
+--usage
+SELECT dbo.CalculateTotalPrice(100, 10) AS TotalPrice;
+```
+```sql - Ex:
+--define
+CREATE FUNCTION GetCostAverage() 
+RETURNS DECIMAL(5,2) DETERMINISTIC
+
+BEGIN
+    RETURN (SELECT AVG(Cost) FROM Orders);
+END 
+
+--usage
+SELECT GetCostAverage();
+```
+```sql - Ex:
+CREATE FUNCTION dbo.GetSampleData()
+RETURNS @ResultTable TABLE (ID INT, Name NVARCHAR(100))
+AS
+BEGIN
+    INSERT INTO @ResultTable (ID, Name)
+    VALUES (1, 'Alice'), (2, 'Bob');
+
+    RETURN;
+END;    
+```
+
+* **store procedures**
+* -> can change database objects
+* -> can only be invoked using the CALL statement (_we can call a `function` inside stored procedure but not vise versa_)
+* -> do not have to return a value, but we can still return values using **`RETURN` or `OUTPUT` parameters**
+* _ngoài ra trong quá trình thực thi, stored procedure có thể s/d **Transaction**, **try/catch**; còn function thì không thể_
+
+```sql - Ex:
+--define
+CREATE PROCEDURE dbo.AddCustomer  
+    @Name NVARCHAR(100),  
+    @Email NVARCHAR(100)  
+AS  
+BEGIN  
+    INSERT INTO Customers (Name, Email)  
+    VALUES (@Name, @Email);  
+END;
+
+--usage
+EXEC dbo.AddCustomer 'John Doe', 'john.doe@example.com';
+```
+
 ## Subquery:
 * a `nested query embedded within another query`
 * It allows you to perform complex queries by using the results of the inner query in the outer query
-```
+```sql
 -- Retrieving orders for customers from the USA
 SELECT OrderID, OrderDate, TotalAmount
 FROM Orders
@@ -129,6 +242,298 @@ BEGIN
 END;
 ```
 
+## 19. SQL Server Collation
+* _https://learn.microsoft.com/en-us/sql/relational-databases/collations/collation-and-unicode-support?view=sql-server-ver16_
+* -> used with **`character data types`** (_such as **char** and **varchar**_), specifies the bit patterns that represent each character in a dataset
+* -> When we select a collation, we're **`assigning certain characteristics to our data`**
+* -> these characteristics affect the results of many operations in the database 
+
+* => determine how the database engine **sorts and compares character data**
+* => nó sẽ ảnh hưởng đến data integrity, query performance, cross-system compatibility, localization
+
+* _đây là vấn đề ta cần quan tâm before creating a database_
+* _nếu dự án của ta sử dụng multiple database, inconsistent **collation** settings can cause errors_
+
+### Checking
+* _when picking a collation, check the SQL Server documentation for a full list of collations and their features_
+
+* -> check **server collation** for **an instance of SQL Server**:
+```sql
+SELECT SERVERPROPERTY('collation');
+```
+
+* -> find list of collations that are **available on instance of SQL Server**
+```sql
+SELECT * FROM sys.fn_helpcollations();
+```
+
+### Options 
+* _when `Binary (_BIN)` or `Binary-code point (_BIN2)` is chosen, other collation options aren’t available_
+* -> **Case-sensitive (_CS)**
+* -> **Accent-sensitive (_AS)**
+* -> **Kana-sensitive (_KS)**
+* -> **Width-sensitive (_WS)**
+* -> **Variation-selector-sensitive (_VSS)a**
+* -> **Binary (_BIN)**
+* -> **Binary-code point (_BIN2)**
+
+```bash - Example
+$ `SQL_Latin1_General_CP1_CI_AS`: Default collation for US English, case-insensitive, accent-sensitive.
+$ `Latin1_General_CS_AS`: Case-sensitive and accent-sensitive collation for US English.
+$ `French_CI_AS`: Case-insensitive and accent-sensitive collation for French.
+$ `Japanese_CI_AS`: Case-insensitive and accent-sensitive collation for Japanese.
+$ `Chinese_PRC_CI_AS`: Case-insensitive and accent-sensitive collation for Simplified Chinese (PRC)
+```
+
+### Supported
+* -> SQL Server supports storing objects that have different collations in database
+
+### Collation levels
+* https://www.geeksforgeeks.org/sql-server-collation/
+
+* -> **`Server-level collations`**
+* -> **`Database-level collations`**
+* -> **`Column-level collations`**
+* -> **`Expression-level collations`**
+
+```sql
+-- 'Server-level collations' set during SQL Server setup
+--  find server-level collation for an SQL Server
+SELECT CONVERT(varchar, SERVERPROPERTY('collation'));
+
+-- Database-level collations: to create database with collation:
+CREATE DATABASE GeekDB COLLATE Greek_CS_AI; 
+-- change collation of user database:
+-- -> however, collation for system databases cannot be changed until change of collation for server
+-- -> and altering database-level collation doesn’t affect column-level or expression-level collations
+ALTER DATABASE GeekDB COLLATE SQL_Latin1_General_CP1_CI_AS; 
+
+-- Column-level collations: while creating or altering table, one can specify collations for each character-string column by using COLLATE clause:
+CREATE TABLE Users (
+    ID INT PRIMARY KEY,
+    Name VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS -- 'Case-Insensitive' and 'Accent-Sensitive'
+);
+-- Case-Insensitive:
+INSERT INTO Users (ID, Name) VALUES (1, 'John');
+SELECT * FROM Users WHERE Name = 'john'; -- still find the record
+-- Accent Sensitive:
+INSERT INTO Users (ID, Name) VALUES (2, 'José');
+SELECT * FROM Users WHERE Name = 'Jose'; -- No result
+-- change collation of column:
+ALTER TABLE Geektable 
+ALTER COLUMN namecol NVARCHAR(10) COLLATE Greek_CS_AI; 
+
+-- Expression-level collations: are used when statement is run, and they affect the way output is returned
+SELECT * FROM tablename 
+ORDER BY columnname COLLATE collationtype;
+```
+
+```sql - sorting
+CREATE TABLE SortTest (
+    Name VARCHAR(50) COLLATE Latin1_General_CS_AS -- Case-Sensitive
+);
+INSERT INTO SortTest (Name) VALUES ('apple'), ('Banana'), ('cherry'), ('Apple'), ('banana');
+SELECT * FROM SortTest ORDER BY Name;
+-- Output:
+-- Apple  
+-- Banana  
+-- apple  
+-- banana  
+-- cherry
+
+CREATE TABLE SortTest2 (
+    Name VARCHAR(50) COLLATE Latin1_General_CI_AS -- Case-Insensitive
+);
+INSERT INTO SortTest2 (Name) VALUES ('apple'), ('Banana'), ('cherry'), ('Apple'), ('banana');
+SELECT * FROM SortTest2 ORDER BY Name;
+-- Apple  
+-- apple  
+-- Banana  
+-- banana  
+-- cherry 
+```
+
+## best practice to write efficient sql queries?
+
+### Efficient SQL queries
+* https://www.stratascratch.com/blog/best-practices-to-write-sql-queries-how-to-structure-your-code/
+* -> Remove multiple nested queries
+* -> Ensure consistent aliases
+* -> Remove unnecessary ORDER BY clauses
+* -> Remove unnecessary subqueries
+* -> If possible, use WHERE and not HAVING
+* -> Format your code according to best practices
+
+### DB performance
+
+### SQL query performance
+* -> **`Create Small Batches of Data for Deletion and Updation`**
+- in case if there will be a rollback, you will avoid losing or killing your data
+- also enhances concurrency, other operations can continue processing unaffected data while small batches are being modified
+- deleting or updating large amounts of data in bulk can cause performance issues and long locks
+```sql
+DELETE FROM Orders WHERE OrderDate < '2020-01-01';
+
+-- replace with small batches to prevents long-running transactions and excessive locking 
+WHILE 1=1
+BEGIN
+    DELETE TOP (1000) FROM Orders WHERE OrderDate < '2020-01-01';
+    IF @@ROWCOUNT = 0 BREAK;
+END
+```
+
+* -> **`Use CASE instead of UPDATE`**
+- Using CASE inside an UPDATE can help apply conditional changes in a single scan rather than running multiple UPDATE statements
+```sql
+UPDATE Employees SET Status = 'Active' WHERE LastLogin >= '2023-01-01';
+UPDATE Employees SET Status = 'Inactive' WHERE LastLogin < '2023-01-01';
+
+-- replace with:
+UPDATE Employees
+SET Status = CASE 
+    WHEN LastLogin >= '2023-01-01' THEN 'Active'
+    ELSE 'Inactive'
+END;
+```
+
+* -> **`Use Temp Tables`** 
+- thay vì join 1 bảng lớn, ta sẽ extract thành 1 bảng tạm nhỏ as frequently accessed data để reducing repeated table scans, computational load when performning complex joins on large datasets
+```sql
+SELECT o.OrderID, c.CustomerName  
+FROM Orders o  
+JOIN Customers c ON o.CustomerID = c.CustomerID  
+WHERE c.Region = 'West';
+
+-- replace with:
+SELECT CustomerID INTO #TempCustomers FROM Customers WHERE Region = 'West';
+
+SELECT o.OrderID, c.CustomerName  
+FROM Orders o  
+JOIN #TempCustomers c ON o.CustomerID = c.CustomerID;
+```
+
+* -> **`Avoid Negative Searches`**
+- Queries that use **NOT IN**, **NOT LIKE**, or **<>** slow down our DB performance a lot
+```sql
+SELECT * FROM Customers WHERE NOT Country = 'USA';
+
+-- replace with:
+SELECT * FROM Customers WHERE Country IN ('Canada', 'UK', 'Germany');
+--or
+SELECT c.CustomerID FROM Customers c  
+LEFT JOIN Orders o ON c.CustomerID = o.CustomerID  
+WHERE o.CustomerID IS NULL;
+```
+
+* -> **`Use The Exact Number of Columns`**
+- chỉ SELECT những cột cần thiết, không nên SELECT *
+- Selecting unnecessary columns increases memory usage and network traffic, slowing performance
+```sql
+SELECT * FROM Employees;
+
+-- replace with:
+SELECT EmployeeID, FirstName, LastName FROM Employees;
+```
+
+* -> **`No Need to Count Everything in the Table`**
+- EXISTS(SELECT 1 FROM dbo.T1) is faster than COUNT(*), as it stops searching after finding the first match
+```sql
+DECLARE @CT INT;
+SET @CT = (SELECT COUNT(*) FROM Orders WHERE Status = 'Pending');
+IF @CT > 0
+BEGIN
+    PRINT 'Orders Pending';
+END
+
+-- replace with:
+IF EXISTS (SELECT 1 FROM Orders WHERE Status = 'Pending')
+BEGIN
+    PRINT 'Orders Pending';
+END
+```
+
+* -> **`Avoid Using Globally Unique Identifiers (GUIDs)`**
+- GUIDs (NEWID()) are large and unordered, which can fragment indexes and slow performance.
+- Use IDENTITY (auto-increment) or SEQUENTIAL GUIDs (NEWSEQUENTIALID()) when unique values are needed in an ordered manner
+```sql
+CREATE TABLE Orders (
+    OrderID UNIQUEIDENTIFIER DEFAULT NEWID() PRIMARY KEY,
+    OrderDate DATETIME
+);
+
+-- replace with:
+CREATE TABLE Orders (
+    OrderID INT IDENTITY(1,1) PRIMARY KEY,
+    OrderDate DATETIME
+);
+```
+
+* -> **`Avoid Using Triggers`**
+- using triggers results in lock many tables until the trigger completes the cycle. 
+- we can split the data into several transactions to lock up certain resources; this will help us in making our transaction faster
+```sql
+CREATE TRIGGER trg_UpdateStock  
+ON Orders AFTER INSERT  
+AS  
+BEGIN  
+    UPDATE Products SET Stock = Stock - 1  
+    FROM Products p JOIN inserted i ON p.ProductID = i.ProductID;  
+END
+
+-- replace with:
+CREATE PROCEDURE ProcessOrder(@ProductID INT)  
+AS  
+BEGIN  
+    UPDATE Products SET Stock = Stock - 1 WHERE ProductID = @ProductID;  
+END
+```
+
+* -> **`Avoid Using ORM`**
+- ORMs is useful for rapid development and maintaining business logic; however, it may generate inefficient queries that my cause a bad performance in our daily encounters
+- instead of completely avoiding ORMs, optimize ORM-generated queries by using **stored procedures**, **tuning queries**, and **leveraging lazy/eager loading** wisely
+
+* -> **`Avoid Using DISTINCT If Not Necessary`**
+- instead of using DISTINCT, ensure that duplicates are eliminated at the source by properly structuring joins and conditions
+```sql
+SELECT DISTINCT CustomerID FROM Orders;
+
+-- replace with:
+SELECT CustomerID FROM Orders GROUP BY CustomerID;
+```
+
+* -> **`Use Fewer Cursors`**
+- Cursors process one row at a time, leading to slow performance and locking issues
+- Use set-based operations (JOIN, CASE, MERGE, CTE) instead of cursors whenever possible
+```sql
+DECLARE cur CURSOR FOR SELECT OrderID FROM Orders;
+OPEN cur;
+FETCH NEXT FROM cur INTO @OrderID;
+WHILE @@FETCH_STATUS = 0  
+BEGIN  
+    -- Process each order  
+    FETCH NEXT FROM cur INTO @OrderID;  
+END  
+CLOSE cur;
+DEALLOCATE cur;
+
+-- replace with:
+UPDATE Orders SET Status = 'Processed' WHERE OrderDate < '2023-01-01';
+```
+
+* -> Indexes
+
+* -> Avoid using **`subqueries`**
+```sql
+SELECT * FROM customers WHERE customer_id IN (SELECT customer_id FROM orders WHERE order_date >= DATEADD(day, -30, GETDATE()));
+
+-- this query will be faster than the previous query:
+SELECT DISTINCT c.* FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_date >= DATEADD(day, -30, GETDATE());
+```
+
+* -> using stored procedure
+- khi ta gửi 1 raw SQL queries from the application, câu query dài có thể ảnh hưởng tới traffic
+- và đồng thời database sẽ phải đọc câu query này để đưa ra execution plan rồi mới thực thi đc
+- stored procedure thì khác, khi được lưu DB sẽ biết nó đc parsed and optimized thế nào, nên có thể thực thi ngay lập tức
 
 ## 18. Difference between TRUNCATE, DELETE and DROP commands?
 ### DELETE
