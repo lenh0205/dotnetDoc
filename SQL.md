@@ -421,18 +421,97 @@ SELECT * FROM SortTest2 ORDER BY Name;
 
 ## best practice to write efficient sql queries?
 
-### Efficient SQL queries
-* https://www.stratascratch.com/blog/best-practices-to-write-sql-queries-how-to-structure-your-code/
-* -> Remove multiple nested queries
-* -> Ensure consistent aliases
-* -> Remove unnecessary ORDER BY clauses
-* -> Remove unnecessary subqueries
-* -> If possible, use WHERE and not HAVING
-* -> Format your code according to best practices
+### SQL Performance Tuning
+* -> is the process of **optimizing SQL queries** to improve the **`speed and efficiency of database operations`**
+* -> involves various techniques to **optimize the execution of queries**, **manage system resources more effectively**, and **ensure that the database responds quickly to user requests**
 
-### DB performance
+### Major Factors Affecting SQL Speed (computation and execution time in SQL)
+* -> **`Table Size`**: Larger tables with millions of rows can slow down query performance if the query hits a large number of rows.
+* -> **`Joins`**: The use of complex joins, especially when joining multiple tables, can significantly affect query execution time.
+* -> **`Aggregations`**: Queries that aggregate large datasets require more processing time and resources.
+* -> **`Concurrency`**: Simultaneous queries from multiple users can overwhelm the database, leading to slow performance.
+* -> **`Indexes`**: Proper indexing speeds up data retrieval but, when misused, can lead to inefficiencies
 
 ### SQL query performance
+* -> **`SELECT fields instead of using SELECT *`**
+- chỉ SELECT những cột cần thiết, không nên SELECT *
+- Selecting unnecessary columns increases memory usage and network traffic, slowing performance
+```sql
+SELECT * FROM Employees;
+
+-- replace with:
+SELECT EmployeeID, FirstName, LastName FROM Employees;
+```
+
+* -> **`Avoid SELECT DISTINCT`**
+- DISTINCT forces sorting or hashing, which can be expensive
+- a better approach is using GROUP BY, JOIN conditions, or subqueries to refine results
+```sql
+SELECT DISTINCT FirstName, LastName,
+State FROM GeeksTable;
+
+-- replace with:
+SELECT  FirstName, LastName,
+State FROM GeeksTable WHERE State IS NOT NULL;
+```
+
+* -> **`Use INNER JOIN Instead of WHERE for Joins`**
+```sql
+SELECT GFG1.CustomerID, GFG1.Name, GFG1.LastSaleDate
+FROM GFG1, GFG2
+WHERE GFG1.CustomerID = GFG2.CustomerID
+
+-- replace with:
+SELECT GFG1.CustomerID, GFG1.Name, GFG1.LastSaleDate
+FROM GFG1 
+INNER JOIN GFG2
+ON GFG1.CustomerID = GFG2.CustomerID
+```
+
+* -> **`Use WHERE Instead of HAVING`**
+- HAVING is applied after aggregation, so filtering earlier using WHERE minimizes data before aggregation
+```sql
+SELECT GFG1.CustomerID, GFG1.Name, GFG1.LastSaleDate
+ FROM GFG1 INNER JOIN GFG2
+ON GFG1.CustomerID = GFG2.CustomerID
+GROUP BY GFG1.CustomerID, GFG1.Name
+HAVING GFG2.LastSaleDate BETWEEN "1/1/2019" AND "12/31/2019"
+
+-- replace with:
+SELECT GFG1.CustomerID, GFG1.Name, GFG1.LastSaleDate
+FROM GFG1 INNER JOIN GFG2
+ON GFG1.CustomerID = GFG2.CustomerID
+WHERE GFG2.LastSaleDate BETWEEN "1/1/2019" AND "12/31/2019"
+GROUP BY GFG1.CustomerID, GFG1.Name
+```
+
+* -> **`Limit Wildcards to the End of a Search Term`**
+- Indexes work left to right, so using % at the beginning forces a full table scan.
+- If you must search within strings (%No%), consider full-text search (FTS) or indexing solutions
+```sql
+SELECT City FROM GeekTable WHERE City LIKE ‘%No%’
+
+-- replace with:
+SELECT City FROM GeekTable WHERE City LIKE ‘No%’ 
+```
+
+* -> **`Use LIMIT for Sampling Query Results`**
+- Good practice for debugging/testing queries.
+- Be aware that in some databases (SQL Server), LIMIT is replaced by TOP, and in Oracle, it's FETCH FIRST N ROWS
+```sql
+SELECT GFG1.CustomerID, GFG1.Name, GFG1.LastSaleDate
+FROM GFG1
+INNER JOIN GFG2
+ON GFG1.CustomerID = GFG2.CustomerID
+WHERE GFG2.LastSaleDate BETWEEN "1/1/2019" AND "12/31/2019"
+GROUP BY GFG1.CustomerID, GFG1.Name
+LIMIT 10
+```
+
+* -> **`Run Queries During Off-Peak Hours`**
+- Scheduling heavy queries reduces impact on production.
+- If real-time analytics is needed, consider read replicas, indexed views, or caching mechanisms.
+
 * -> **`Create Small Batches of Data for Deletion and Updation`**
 - in case if there will be a rollback, you will avoid losing or killing your data
 - also enhances concurrency, other operations can continue processing unaffected data while small batches are being modified
@@ -489,16 +568,6 @@ SELECT * FROM Customers WHERE Country IN ('Canada', 'UK', 'Germany');
 SELECT c.CustomerID FROM Customers c  
 LEFT JOIN Orders o ON c.CustomerID = o.CustomerID  
 WHERE o.CustomerID IS NULL;
-```
-
-* -> **`Use The Exact Number of Columns`**
-- chỉ SELECT những cột cần thiết, không nên SELECT *
-- Selecting unnecessary columns increases memory usage and network traffic, slowing performance
-```sql
-SELECT * FROM Employees;
-
--- replace with:
-SELECT EmployeeID, FirstName, LastName FROM Employees;
 ```
 
 * -> **`No Need to Count Everything in the Table`**
@@ -586,9 +655,7 @@ DEALLOCATE cur;
 UPDATE Orders SET Status = 'Processed' WHERE OrderDate < '2023-01-01';
 ```
 
-* -> Indexes
-
-* -> Avoid using **`subqueries`**
+* -> **`Avoid using 'subqueries'`**
 ```sql
 SELECT * FROM customers WHERE customer_id IN (SELECT customer_id FROM orders WHERE order_date >= DATEADD(day, -30, GETDATE()));
 
@@ -596,10 +663,12 @@ SELECT * FROM customers WHERE customer_id IN (SELECT customer_id FROM orders WHE
 SELECT DISTINCT c.* FROM customers c JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_date >= DATEADD(day, -30, GETDATE());
 ```
 
-* -> using stored procedure
+* -> **`using stored procedure`**
 - khi ta gửi 1 raw SQL queries from the application, câu query dài có thể ảnh hưởng tới traffic
 - và đồng thời database sẽ phải đọc câu query này để đưa ra execution plan rồi mới thực thi đc
 - stored procedure thì khác, khi được lưu DB sẽ biết nó đc parsed and optimized thế nào, nên có thể thực thi ngay lập tức
+
+### 'Index' tuning
 
 ## 18. Difference between TRUNCATE, DELETE and DROP commands?
 ### DELETE
