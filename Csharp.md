@@ -31,9 +31,48 @@ int value = myNullableInt ?? 1;   // value will be "1" since myNullableInt is nu
 ```
 * `Static Nullable class` is a helper class to compare nullable types
 
+## 17. Data types in C#?
+* -> **`Value Types`** (Stored in Stack) - numeric type, boolean, character, Structs & Enums
+* -> **`Reference Types`** (Stored in Heap) - class, string, Arrays, delegates, interfaces, object
+* -> **`Pointer Types`** (Unsafe Code) - int*, char*, ...
+* -> **`Nullable Types`** (? for Value Types) - int? allows null values
+
 ## 16. Anonymous type in C#? 
+* -> 
 
 ## 2. Boxing and Unboxing ?
+* -> **`Boxing`** - is a process of converting a Value Type variable (char, int etc.) to a Reference Type variable (object or any interface type implemented by the value type)
+* -> **`Unboxing`** - is an explicit conversion process
+
+```cs - boxing
+// Boxing to 'object'
+int num = 2020;
+object obj = num; // boxing
+num = 100;
+System.Console.WriteLine(num); // 100
+System.Console.WriteLine(obj); // 2020
+
+// Boxing to 'Interface'
+interface IExample
+{
+    void Display();
+}
+struct SampleStruct : IExample
+{
+    public void Display()
+    {
+        Console.WriteLine("Hello from struct!");
+    }
+}
+SampleStruct s = new SampleStruct();
+IExample example = s; // Boxing happens here!
+```
+
+```cs - unboxing
+int num = 23;         // value type is int and assigned value 23
+Object Obj = num;    // Boxing
+int i = (int)Obj;    // Unboxing
+```
 
 ## 13. What are value types and reference types?
 * **`Value type`** - store the actual data directly in memory
