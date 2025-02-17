@@ -79,9 +79,13 @@ CREATE INDEX IX_Employee_Active ON Employee (EmployeeID) WHERE IsActive = 1;
 * -> if something goes wrong (like a system crash), **`both steps must be undone (rolled back) to keep the database correct`**
 * -> a transaction follows **`ACID rules`**
 
-## 3. Transaction Isolation
-* -> since multiple users run transactions at the same time 
-* -> SQL provides **isolation levels** to **`control how transactions affect each other`**
+## 3. Transaction Isolation Level
+* -> since multiple users run transactions at the same time, SQL provides **isolation levels** to **`control how transactions affect each other`**
+* https://blog.vietnamlab.vn/transaction-isolation-levels-trong-dbms/
+* https://www.geeksforgeeks.org/transaction-isolation-levels-dbms/
+* https://learn.microsoft.com/vi-vn/sql/t-sql/language-elements/transaction-isolation-levels?view=sql-server-2017
+* https://www.cockroachlabs.com/blog/sql-isolation-levels-explained/
+* https://www.metisdata.io/blog/transaction-isolation-levels-and-why-we-should-care
 
 ### the main isolation levels
 * -> **`READ UNCOMMITTED`** (the lowest level) - transactions can read uncommitted data (risky!)
@@ -97,25 +101,87 @@ CREATE INDEX IX_Employee_Active ON Employee (EmployeeID) WHERE IsActive = 1;
 * -> **`Update Lock (U)`** - used before updating a row
 
 ## 4. Table Hint
-* -> is a special **instruction** that **`changes how SQL locks or reads data`**
+* -> a special type of explicit command that is used to **`override the default behavior of the SQL Server query optimizer`** during the **T-SQL query execution**
+* _one example is WITH (NOLOCK)_
 
-* -> one example is WITH (NOLOCK)
+### Mechanism
+* -> accomplished by **`enforcing a specific locking method, a specific index or query processing operation`** (_such index seek or table scan_)
+* -> to be used by the **`SQL Server query optimizer`** to build the **query execution plan**
+* -> the table hints can be added to the FROM clause of the T-SQL query, affecting the table or the view that is referenced in the FROM clause only
 
 ## 1. 'WITH(NOLOCK)' in SQL Server
-* -> https://stackoverflow.com/questions/686724/what-is-with-nolock-in-sql-server
-* -> tells SQL **`not to use shared locks when reading data`**
-* _is the equivalent of using READ UNCOMMITED as a transaction isolation level_
+* _https://www.sqlshack.com/understanding-impact-clr-strict-security-configuration-setting-sql-server-2017/_
+* _https://www.sqlshack.com/understanding-the-impact-of-nolock-and-with-nolock-table-hints-in-sql-server/_
+* -> tells SQL **`not to use shared locks when reading data`** (_is the equivalent of using READ UNCOMMITED as a transaction isolation level_)
+* -> nó là 1 **`table hint`** được sử dụng nhiều hơn cả trong **SELECT T-SQL statements** 
+* -> _nói chung là nó cho phép SQL đọc dữ liệu từ các bảng kể cả khi đang bị lock mà không bị chặn bởi các tiến trình khác - việc này giúp cải thiện hiệu suất truy vấn, tuy nhiên có khả năng dữ liệu đọc được bị sai lệch, không chuẩn_
 
-* -> this **`makes queries faster`** because they don't wait for other transactions to finish
-* -> but it also means we **`can read uncommitted (incorrect) data`**
-
-* => we might see **`data that never actually existed`** (if another transaction rolls back)
-* => we might see **`duplicate or missing rows`** if a transaction is updating data while you read it
+* => this **`makes queries faster`** because they don't wait for other transactions to finish; but it also means we **`can read uncommitted (incorrect) data`**
 
 * => it is not safe for applications where **data accuracy is important**
+* => the WITH (NOLOCK) table hint is a good idea when the system uses explicit transactions heavily, which blocks the data reading very frequently
+* => the WITH (NOLOCK) table hint is used when working with systems that accept out of sync data, such as the reporting systems
 * => useful for reporting or analytics where **speed matters more than accuracy**
 
 * _Ex: in banking applications with high transaction rates, this is dangerous because we might show an incorrect balance or process a wrong transaction_
+
+### Problem 
+* -> **`Dirty Reads`** – which can occur when reading the data that is being modified or deleted during the uncommitted data read, so that the data you read could be different, or never even have existed
+* -> **`Nonrepeatable Reads`** – occurs when it is required to read the same data multiple times and the data changes during these readings; in this case, you will read multiple versions of the same row
+* -> **`Phantom Reads`** – we will get more records when the transaction that is inserting new records is rolled back, or fewer records when the transaction that is deleting existing data is rolled back
+
+* -> Another problem that may occur when other transactions move data you have not read yet to a location that you have already scanned, or have added new pages to the location that you already scanned. In this case, you will miss these records and will not see it in the returned result. If another transaction moves the data that you have already scanned to a new location that you have not read yet, you will read the data twice. Also, as the requested data could be moved or deleted during your reading process, the below error could be faced:
+```r
+Msg 601, Level 12, State 1
+Could not continue scan with NOLOCK due to data movement.
+```
+
+### Example:
+```sql
+-- chạy trên một cửa sổ sql studio management khác
+-- nhưng ta sẽ không comit tới database để những bản ghi bị khóa 
+BEGIN TRAN
+UPDATE Person.Contact SET Suffix = 'B' WHERE ContactID < 20
+-- ROLLBACK or COMMIT
+
+-- nếu giờ ta chạy câu truy vấn dưới đây thì ta sẽ thấy nó cứ treo mãi mà không trả về kết quả nào
+-- ta có thể chạy 'sp_who2' để biết được là lệnh SELECT đã bị block lại
+SELECT * FROM Person.Contact WHERE ContactID < 20
+
+-- để truy xuất những bản ghi đã bị khóa đó, giờ ta sẽ sử dụng chỉ thị NOLOCK
+-- ta sẽ thấy cột Suffix bây giờ tất cả giá trị đều là "B"
+SELECT * FROM Person.Contact WITH (NOLOCK) WHERE ContactID < 20
+
+-- tương tự với READUNCOMMITTED
+-- allows the query to see the data changes before committing the transaction that is changing it
+SELECT * FROM Person.Contact WITH (READUNCOMMITTED)
+
+-- => Nếu trong trường hợp lệnh UPDATE trên kia được rollback lại thì dữ liệu trả về bị sai lệch, không chuẩn là ở chỗ đó
+```
+
+```sql
+-- NOLOCK cần một khóa Sch-S ( ổn định schema ), SELECT sử dụng NOLOCK vẫn có thể bị chặn nếu một bảng bị thay đổi và không được commit
+-- run in query window 1
+BEGIN TRAN
+ALTER TABLE Person.Contact ADD column_b 
+VARCHAR(20) NULL ;
+
+-- Nếu chúng ta chạy câu lệnh SELECT nó vẫn sẽ bị chặn trừ khi chúng ta comit hoặc rollback
+-- run in query window 2
+SELECT * FROM Person.Contact WITH (NOLOCK) WHERE ContactID < 20
+```
+
+```sql
+-- ta cũng có thể thiết lập Isolation Level cho tất cả truy vấn sử dụng NOLOCK hoặc READUNCOMMITTED, thay vì từng cái
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED; -- turn it on
+
+SELECT * FROM Person.Contact WHERE ContactID < 20 
+UPDATE Person.Contact SET Suffix = 'B' WHERE ContactID = 1 
+SELECT * FROM Person.Contact WHERE ContactID < 20
+
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED; -- turn it off
+```
 
 ## View:
 * A view is a `virtual table` derived from a SQL query
