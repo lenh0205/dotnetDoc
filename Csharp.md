@@ -38,7 +38,23 @@ int value = myNullableInt ?? 1;   // value will be "1" since myNullableInt is nu
 * -> **`Nullable Types`** (? for Value Types) - int? allows null values
 
 ## 16. Anonymous type in C#? 
-* -> 
+* -> a temporary, compiler-generated type used when we need **a simple object without defining a class**
+* -> key features: declared using **var** with object initializer syntax **{}**, properties are **read-only** (immutable), the type is compiler-generated and **only exists in the scope where it was created**
+
+```cs
+var students = new[]
+{
+    new { Name = "Alice", Grade = "A" },
+    new { Name = "Bob", Grade = "B" }
+};
+
+var highGraders = students.Where(s => s.Grade == "A");
+
+foreach (var student in highGraders)
+{
+    Console.WriteLine(student.Name);
+}
+```
 
 ## 2. Boxing and Unboxing ?
 * -> **`Boxing`** - is a process of converting a Value Type variable (char, int etc.) to a Reference Type variable (object or any interface type implemented by the value type)
