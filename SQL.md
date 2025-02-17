@@ -183,6 +183,9 @@ SELECT * FROM Person.Contact WHERE ContactID < 20
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED; -- turn it off
 ```
 
+## 15. SQL Reusability 
+* -> Stored Procedure, Function (TVF, Scalar), View, CTE, Temp Table, Derived Table
+
 ## View:
 * A view is a `virtual table` derived from a SQL query
 * It allows you to `encapsulate complex queries` or commonly used query logic into a named object
