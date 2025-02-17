@@ -35,7 +35,26 @@ int value = myNullableInt ?? 1;   // value will be "1" since myNullableInt is nu
 
 ## 2. Boxing and Unboxing ?
 
+## 13. What are value types and reference types?
+* **`Value type`** - store the actual data directly in memory
+* -> save data  directly into Stack
+* -> when we assign a value type variable to another, it creates a copy of the data
+```
+Enum, Struct, int, float, boolean,...
+```
+* **`Reference Type`** - store a reference (memory address) to the actual data instead of the data itself
+* -> save **pointer reference** in Stack, but value of variable are in Heap
+* -> when we assign a reference type variable to another, both point to the same memory location
+```
+Class, Object, Array, Indexer, Interface
+```
+
 ## 3. 'string' is reference type or value type?
+* -> string is a **`reference type`**, but it **`behaves like a value`** type 
+* -> because it is **`immutable`**
+
+* _when you modify a string, a new object is created instead of modifying the original_
+* _assigning a string to another does not create a reference to the same object (unlike other reference types)_
 
 ## 1. IEnumerable
 * **`System.Collections.Concurrent`**
