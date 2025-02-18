@@ -10,12 +10,13 @@
 * My favorite project would be my last one—a Document Management System for a government organization
 * The goal was to improve transparency and efficiency in interdepartmental communication and document management.
 
-* What made this project particularly interesting for me was its technical complexity. It required working with both .NET Core and .NET Framework modules, integrating server-side rendering and client-side rendering. I had the opportunity to explore various technologies and design patterns, such as:
--> UnitOfWork pattern for better data management,
--> FluentValidation to simplify validation logic,
--> Automapper for seamless object mapping,
--> React for the frontend, where we built a custom application,
--> And extensive unit testing to ensure reliability.
+* What made this project particularly interesting for me was its technical complexity. 
+* It required working with both .NET Core and .NET Framework modules, integrating server-side rendering and client-side rendering. I had the opportunity to explore various technologies and design patterns, such as:
+- UnitOfWork pattern for better data management,
+- FluentValidation to simplify validation logic,
+- Automapper for seamless object mapping,
+- React for the frontend, where we built a custom application,
+- And extensive unit testing to ensure reliability.
 
 * The project was developed by a team of five, following the Agile process, where we used Jira for tracking tasks and Confluence for documentation. 
 * In this project, I contributed as a full-stack developer, handling both backend and frontend development.
