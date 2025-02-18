@@ -119,9 +119,8 @@ CREATE INDEX IX_Employee_Active ON Employee (EmployeeID) WHERE IsActive = 1;
 * => this **`makes queries faster`** because they don't wait for other transactions to finish; but it also means we **`can read uncommitted (incorrect) data`**
 
 * => it is not safe for applications where **data accuracy is important**
-* => the WITH (NOLOCK) table hint is a good idea when the system uses explicit transactions heavily, which blocks the data reading very frequently
-* => the WITH (NOLOCK) table hint is used when working with systems that accept out of sync data, such as the reporting systems
-* => useful for reporting or analytics where **speed matters more than accuracy**
+* => is a good idea when the system uses explicit transactions heavily, which blocks the data reading very frequently
+* => is used when working with systems that accept out of sync data or when **speed matters more than accuracy**, such as the reporting or analytics systems
 
 * _Ex: in banking applications with high transaction rates, this is dangerous because we might show an incorrect balance or process a wrong transaction_
 
