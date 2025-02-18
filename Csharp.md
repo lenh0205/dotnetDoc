@@ -190,7 +190,7 @@ Class, Object, Array, Indexer, Interface
 * The key cannot be null however a value can be null
 * We can perform dynamic allocation of the memory inside Hashtable
 
-## System.String or System.Text.StringBuilder classes
+## 'System.String' or 'System.Text.StringBuilder' classes
 * offer similar functionality for accessing characters, determining string lengths, and performing common string operations
 ### System.String
 * System.String objects are **`immutable`**, 
