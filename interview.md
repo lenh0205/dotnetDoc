@@ -8,7 +8,7 @@
 
 # Describe your favorite/last project ?
 * My favorite project would be my last one—a Document Management System for a government organization
-* The goal was to improve transparency and efficiency in interdepartmental communication and document management.
+* The goal was to improve transparency and efficiency in document management.
 
 * What made this project particularly interesting for me was its technical complexity. 
 * It required working with both .NET Core and .NET Framework modules, integrating server-side rendering and client-side rendering. I had the opportunity to explore various technologies and design patterns, such as:
