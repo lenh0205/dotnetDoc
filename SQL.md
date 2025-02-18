@@ -112,8 +112,9 @@ CREATE INDEX IX_Employee_Active ON Employee (EmployeeID) WHERE IsActive = 1;
 ## 1. 'WITH(NOLOCK)' in SQL Server
 * _https://www.sqlshack.com/understanding-impact-clr-strict-security-configuration-setting-sql-server-2017/_
 * _https://www.sqlshack.com/understanding-the-impact-of-nolock-and-with-nolock-table-hints-in-sql-server/_
-* -> nó là 1 **`table hint`** (_được sử dụng nhiều hơn cả trong **SELECT T-SQL statements**_)
-* -> tells SQL **`not to use shared locks when reading data`** (_is the equivalent of using READ UNCOMMITED as a transaction isolation level_)
+* -> nó là 1 **`table hint`** (_được sử dụng nhiều hơn cả trong **SELECT T-SQL statements**_) allowing the user to retrieve the data without being affected by the locks due to another process that is changing it
+* _nói đúng hơn là override the **`default transaction isolation level`** of the table - the **READ COMMITTED** isolation level, in which retrieving the changing data will be blocked until these changes are committed_
+* _tells SQL **`not to use shared locks when reading data`** (is the equivalent of using READ UNCOMMITED as a transaction isolation level)_
 
 * => this **`makes queries faster`** because they don't wait for other transactions to finish; but it also means we **`can read uncommitted (incorrect) data`**
 * (_nói chung là nó cho phép SQL đọc dữ liệu từ các bảng mà không bị chặn bởi các tiến trình khác - việc này giúp cải thiện hiệu suất truy vấn, tuy nhiên có khả năng dữ liệu đọc được bị sai lệch, không chuẩn_)
