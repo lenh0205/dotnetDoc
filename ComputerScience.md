@@ -6,12 +6,19 @@
 
 ## 8. Graceful Shutdown
 * -> is the process of stopping a service in a controlled manner, ensuring that **`ongoing tasks (active requests or jobs) are completed correctly`** and **`resources are released appropriately`** (close network connections properly)
+* _về cơ bản tức lại chạy cho xong những gì đang dang dỡ rồi hẳn shutdown và release các resource cho hợp lý_
 * _`forceful shutdown` can interrupt running tasks and cause data loss, incomplete transactions_
 
 * => Data Consistency: It ensures that no data is lost or left in an inconsistent state due to abrupt termination of the service.
 * => User Experience: Users connected to the service at the time of shutdown do not experience unexpected errors.
 * => Resource Management: Resources like file handles, memory, and network connections are properly released.
 * => System Reliability: A well-handled shutdown improves the reliability and availability of the system
+
+```bash
+Hãy tưởng tượng rằng, chúng ta đang có một web service đang tiếp nhận yêu cầu (request) của các client để truy xuất dữ liệu từ database, vì dữ liệu truy xuất lớn nên phản hồi (response) phải mất một thời gian mới truy xuất xong. Trong khi đó anh em lại muốn tắt web service đó đi để bảo trì hệ thống hoặc triển khai (deploy) mới, bằng các thao tác kill ứng dụng web service đang chạy, có thể là câu lệnh stop của docker, câu lệnh kill process bằng PID hay Ctrl + C chúng ta vẫn thường hay dùng .v.v. Ngay lập tức những yêu cầu mà service xử lý chưa xong bị buộc ngưng giữa chừng.
+
+Ngoài ra những kết nối khác như kết nối với database không được kiểm soát và đóng lại đúng cách gây hao tốn tài nguyên của server
+```
 
 ###  Important in Distributed Systems and microservices
 * -> these system often manage critical and long-running processes, involve numerous dependencies, and maintain persistent connections to other services or clients
@@ -47,7 +54,12 @@ In a microservices environment, it’s important to inform upstream and downstre
 
 ### Graceful Shutdown in Common Frameworks
 * -> **`Kubernetes`**: Kubernetes uses preStop hooks and termination grace periods to ensure that pods in a microservice architecture shut down gracefully. Kubernetes sends a SIGTERM signal, and the service is given a configurable grace period to complete existing requests.
+* https://medium.com/@stevensim226/turn-off-your-applications-safely-graceful-shut-down-and-signals-20ed084613ac
+* https://dev.to/arminshoeibi/real-graceful-shutdown-in-kubernetes-and-aspnet-core-2290
+* https://mirsaeedi.medium.com/asp-net-core-graceful-shutdown-862cc5c915e1
+
 * -> **`Node.js`**: In Node.js, a graceful shutdown can be implemented by capturing SIGTERM or SIGINT signals, stopping the HTTP server from accepting new connections, and finishing ongoing requests
+
 * -> **`Spring Boot`**: Spring Boot provides built-in support for graceful shutdown through configuration properties. Once enabled, it ensures that the application waits for active requests to complete before terminating.
 
 ### Best Practices
@@ -63,3 +75,6 @@ In a microservices environment, it’s important to inform upstream and downstre
 * -> Resource leaks or orphaned connections do not occur.
 * -> Dependencies are properly managed during shutdown.
 * -> Regular tests should be conducted in staging environments to refine the shutdown strategy and ensure that edge cases are addressed
+
+### Implementation
+https://medium.com/@stevensim226/turn-off-your-applications-safely-graceful-shut-down-and-signals-20ed084613ac
