@@ -1,5 +1,3 @@
-## 3. Different between class, struct, record ?
-
 ## 4. what is 'indexer' ?
 
 ## 14. What are generics in C#.NET
@@ -36,6 +34,23 @@ int value = myNullableInt ?? 1;   // value will be "1" since myNullableInt is nu
 * -> **`Reference Types`** (Stored in Heap) - class, string, Arrays, delegates, interfaces, object
 * -> **`Pointer Types`** (Unsafe Code) - int*, char*, ...
 * -> **`Nullable Types`** (? for Value Types) - int? allows null values
+
+## 13. What are value types and reference types?
+* **`Value type`** - store the actual data directly in memory
+* -> save data  directly into Stack
+* -> when we assign a value type variable to another, it creates a copy of the data (_changes to one won't affect the other_)
+```
+Enum, Struct, int, float, boolean,...
+```
+* **`Reference Type`** - store a reference (memory address) to the actual data instead of the data itself (_means it can contain  a null-reference - don't refer to anything_)
+* -> save **pointer reference** in Stack, but value of variable are in Heap
+* -> when we assign a reference type variable to another, both point to the same memory location
+```
+Class, Object, Array, Indexer, Interface
+```
+
+## 3. Different between class, struct?
+* -> the main difference between 'class' and 'struct' is that **`'struct' is value type`** and **`'class' is reference type`** 
 
 ## 16. Anonymous type in C#? 
 * -> a temporary, compiler-generated type used when we need **a simple object without defining a class**
@@ -88,20 +103,6 @@ IExample example = s; // Boxing happens here!
 int num = 23;         // value type is int and assigned value 23
 Object Obj = num;    // Boxing
 int i = (int)Obj;    // Unboxing
-```
-
-## 13. What are value types and reference types?
-* **`Value type`** - store the actual data directly in memory
-* -> save data  directly into Stack
-* -> when we assign a value type variable to another, it creates a copy of the data
-```
-Enum, Struct, int, float, boolean,...
-```
-* **`Reference Type`** - store a reference (memory address) to the actual data instead of the data itself
-* -> save **pointer reference** in Stack, but value of variable are in Heap
-* -> when we assign a reference type variable to another, both point to the same memory location
-```
-Class, Object, Array, Indexer, Interface
 ```
 
 ## 3. 'string' is reference type or value type?

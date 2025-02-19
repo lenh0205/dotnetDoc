@@ -429,6 +429,10 @@ SELECT * FROM SortTest2 ORDER BY Name;
 
 ## 4.best practice to write efficient sql queries?
 
+## SQL Process
+* https://docs.oracle.com/en/database/oracle/oracle-database/21/tgsql/sql-processing.html#GUID-14D902DA-5CAC-4892-BE8B-880A4F8A6914
+* https://www.geeksforgeeks.org/sql-query-processing/
+
 ### SQL Performance Tuning
 * -> is the process of **optimizing SQL queries** to improve the **`speed and efficiency of database operations`**
 * -> involves various techniques to **optimize the execution of queries**, **manage system resources more effectively**, and **ensure that the database responds quickly to user requests**
@@ -676,7 +680,7 @@ SELECT DISTINCT c.* FROM customers c JOIN orders o ON c.customer_id = o.customer
 - và đồng thời database sẽ phải đọc câu query này để đưa ra execution plan rồi mới thực thi đc
 - stored procedure thì khác, khi được lưu DB sẽ biết nó đc parsed and optimized thế nào, nên có thể thực thi ngay lập tức
 
-### 'Index' tuning
+* -> **`'Index' tuning`**
 
 ## 18. Difference between TRUNCATE, DELETE and DROP commands?
 ### DELETE
