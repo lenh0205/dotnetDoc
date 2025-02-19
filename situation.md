@@ -32,3 +32,69 @@
 # how to catch up on new/big project? (how to transfer? how to get knowldge? what if have no good documentation...)
 	
 # how to handle production issue?
+* -> ta nên get a stable copy of production before your deploy và chạy nó lên (_có 1 **CI/CD pipeline** sẽ rất là tiện_) đảm bảo how quickly we could get a working version deployed and available for users again
+* -> Debugging problem
+* -> ghi lại tất cả những gì ta làm, gặp, để ý được trong quá trình debug
+
+## Structured Steps for Debugging 
+* _though **`developer's assumptions`** are key as they have a history with the product, the **`logs`** never lie_
+* _focus on what went wrong instead of trying to figure out who to blame_
+
+### Step 1: Replicating the Problem (Tái hiện lỗi)
+* -> thu thập những reports, error descriptions, or screenshots từ khách hàng
+* -> xác định điều kiện để lỗi xảy ra (specific user action, input data, API request) và sử dụng Stage or local **enviroment** để tái hiện
+* -> và cần **`confirm that the issue is reproducible consistently under the given conditions`**
+
+### Step 2: Analyzing Logs and Metrics 
+* -> **`Access Logs`**: Look at application logs, web server logs, database logs, and infrastructure logs for relevant time periods.
+
+* -> **`Search log`** - ta sẽ cần collect **data that reveals anomalies** or **patterns contributing to the issue**
+* _ta có thể **`Search for Indicators`** - Identify error codes, stack traces, or unexpected log entries_
+* _however, it’s not easy to read through all of them by developers, ta có thể triển khai các **`tools to interpret log data`**, these will help to stay on top of **large-scale production applications**_
+* _Ví dụ như: **ELK Stack (Elasticsearch, Logstash, Kibana)**, **Grafana**, **Prometheus**, **DataDog**, and **Splunk**_
+
+* -> **`Analyze Metrics`**: Examine dashboards for system health parameters like latency, throughput, CPU/memory usage, and disk I/O.
+* -> **`Compare Timeframes`**: Look at data before, during, and after the issue to identify differences.
+* -> **`Correlate Events`**: Match the timeline of the issue with any recent deployments, configuration changes, or traffic spikes
+
+### Step 3: Root Cause Analysis (RCA) 
+* _trace the issue back to a specific root cause to **ensure a targeted fix**_
+* -> **`Hypothesize Causes`**: Based on logs and metrics, generate possible explanations for the issue 
+* -> **`Test Hypotheses`**: Experiment with isolated changes or scenarios to confirm or reject each hypothesis
+* -> **`Map Dependencies`**: Analyze service interactions, dependency graphs, or shared resources to find weak points
+* -> **`Trace Code Paths`**: Debug the code involved in the faulty functionality using breakpoints or instrumentation
+* -> **`Validate Findings`**: Use automated tests or controlled experiments to **`confirm the root cause`**
+
+* _Techniques that could help with RCA:_
+* -> **The 5 Whys**: Ask "why" iteratively until the root cause is revealed.
+* -> **Fishbone Diagram**: Categorize potential causes (e.g., people, process, technology).
+* -> **Fault Tree Analysis**: Map out failure paths leading to the issue
+
+### Step 4: Collaborating Across Teams
+* _những complex production problems thường liên quan nhiều systems và teams; mang những expertise liên quan để identify and resolve the problem_
+* _an additional set of eyes from a different angle will bring a different perspective to the table_
+* -> **`Identify Stakeholders`**: Involve developers, QA testers, operations, product managers, and third-party vendors if needed.
+* -> **`Centralize Communication`**: Use incident response tools or shared platforms for real-time updates and task assignments.
+* -> **`Define Roles`**: Assign clear ownership for tasks such as debugging, testing, and deploying fixes.
+* -> **`Maintain Documentation`**: Record findings and decisions to ensure everyone is aligned.
+* -> **`Post-Mortem Discussions`**: Review the incident collaboratively to identify gaps in processes or tools.
+
+### Step 5: Applying a Fix and Testing
+* _Implement and deploy a robust solution safely, a well-tested fix ensures that the problem is resolved **without causing new issues**_
+* -> **`Develop the Fix`**: Write the code, configuration, or operational change to address the root cause.
+* -> **`Peer Review`**: Conduct thorough reviews to catch potential mistakes or overlooked scenarios.
+* -> **`Test the Solution`**: Use unit tests, integration tests, and performance tests to validate the fix under real-world conditions.
+* -> **`Deploy Gradually`**: Roll out the fix incrementally, using techniques like **`blue-green deployments`** or **`canary releases`** to minimize risk.
+* -> **`Monitor Post-Deployment`**: Keep a close eye on metrics and logs after deployment to detect regressions or side effects
+
+### Step 6: Preventative Measures and Continuous Improvement
+* -> improve **Automated Testing Frameworks**, **Code Reviews**, **Monitoring and Alerts**, **Redundancy and Resilience** (handle failures gracefully with fallback mechanisms), **Training and Knowledge Sharing**, **Post-Mortem Culture**
+
+## Real-Life Examples & Case Studies
+### SaaS Application Outage
+We had a team of 10 resources working on a project that was catering to tens and thousands of customers across the world. It was a usual feature fix cycle that happened on a Monday morning. 
+Though we had proper processes, environments, and experiences in place, one of the developers mistakenly updated the wrong configuration files onto production. 
+Everything worked on unit testing until a live customer reported that his data was not populating. Swiftly within the next 15 minutes, the issue was resolved, and found that the test environment’s database was pointed in the production configuration file. This could have been a flow-blown issue if the logs were interpreted in the wrong way. Glad our tools came in handy
+
+### Netflix’s Misconfigured Rule
+Netflix once faced an outage due to a misconfigured firewall rule. By reproducing the issue in a test environment, the team identified the faulty rule. They implemented automated validation tools in their CI/CD pipeline to prevent such errors in the future
