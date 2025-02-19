@@ -1,3 +1,8 @@
+# web common security
+* https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/First_steps/Website_security
+* https://www.toptal.com/cybersecurity/10-most-common-web-security-vulnerabilities
+* https://nmqdigital.com/blog/common-security-threats-to-websites-and-how-to-prevent-them
+* https://www.liquidweb.com/blog/most-common-web-security-problems/
 
 # Cross-Origin Resource Sharing (CORS)
 ```
