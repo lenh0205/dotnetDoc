@@ -422,7 +422,12 @@ SELECT * FROM SortTest2 ORDER BY Name;
 -- cherry 
 ```
 
-## best practice to write efficient sql queries?
+## 3. Database performance
+* -> Indexing
+* -> Database Replication
+* -> Database Sharding
+
+## 4.best practice to write efficient sql queries?
 
 ### SQL Performance Tuning
 * -> is the process of **optimizing SQL queries** to improve the **`speed and efficiency of database operations`**
