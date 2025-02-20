@@ -30,6 +30,12 @@
 * so what I do is initiate a simple ASP.NET Mvc project and apply the integration successfully  
 
 # how to catch up on new/big project? (how to transfer? how to get knowldge? what if have no good documentation...)
+
+# what is a 'high-quality solution' in web development?
+* https://www.acquia.com/blog/crucial-website-quality-assurance-factors
+* https://www.ease.io/blog/14-metrics-every-quality-exec-should-monitor-how-to-calculate-them/
+* https://www.kdci.co/outsourcing-blog/post/quality-assurance-in-web-development
+* https://www.researchgate.net/publication/316883982_Quality_assurance_of_web_services_A_systematic_literature_review
 	
 # how to handle production issue?
 * -> ta nên get a stable copy of production before your deploy và chạy nó lên (_có 1 **CI/CD pipeline** sẽ rất là tiện_) đảm bảo how quickly we could get a working version deployed and available for users again
