@@ -15,9 +15,13 @@
 * => System Reliability: A well-handled shutdown improves the reliability and availability of the system
 
 ```bash
-Hãy tưởng tượng rằng, chúng ta đang có một web service đang tiếp nhận yêu cầu (request) của các client để truy xuất dữ liệu từ database, vì dữ liệu truy xuất lớn nên phản hồi (response) phải mất một thời gian mới truy xuất xong. Trong khi đó anh em lại muốn tắt web service đó đi để bảo trì hệ thống hoặc triển khai (deploy) mới, bằng các thao tác kill ứng dụng web service đang chạy, có thể là câu lệnh stop của docker, câu lệnh kill process bằng PID hay Ctrl + C chúng ta vẫn thường hay dùng .v.v. Ngay lập tức những yêu cầu mà service xử lý chưa xong bị buộc ngưng giữa chừng.
+# Hãy tưởng tượng rằng, chúng ta đang có một web service đang tiếp nhận yêu cầu (request) của các client để truy xuất dữ liệu từ database,
+# vì dữ liệu truy xuất lớn nên phản hồi (response) phải mất một thời gian mới truy xuất xong. 
+# Trong khi đó anh em lại muốn tắt web service đó đi để bảo trì hệ thống hoặc triển khai (deploy) mới, 
+# bằng các thao tác kill ứng dụng web service đang chạy, có thể là câu lệnh stop của docker, câu lệnh kill process bằng PID hay Ctrl + C chúng ta vẫn thường hay dùng .v.v. 
+# Ngay lập tức những yêu cầu mà service xử lý chưa xong bị buộc ngưng giữa chừng.
 
-Ngoài ra những kết nối khác như kết nối với database không được kiểm soát và đóng lại đúng cách gây hao tốn tài nguyên của server
+# Ngoài ra những kết nối khác như kết nối với database không được kiểm soát và đóng lại đúng cách gây hao tốn tài nguyên của server
 ```
 
 ###  Important in Distributed Systems and microservices
