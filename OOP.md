@@ -64,10 +64,6 @@
 * `An abstract class` can have `fields, properties, constructors, methods` (`both abstract and non-abstract`), events
 * `An interface` can only have `properties, methods, events, and indexers` (`without any implementation`)
 
-#### Default Implementation:
-* `An abstract class` can provide `default implementations` for its members.
-* `An interface` `cannot` provide any `default implementation` for its members. Implementing classes must define the implementation for all the interface members
- 
 #### Accessibility:
 * `Members of an abstract class` can have `different access modifiers` (implicit or explicit)
 * `Members of an interface` are `implicitly public` and cannot have explicit access modifiers

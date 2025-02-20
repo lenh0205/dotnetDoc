@@ -73,7 +73,7 @@ foreach (var student in highGraders)
 
 ## 2. Boxing and Unboxing ?
 * -> **`Boxing`** - is a process of converting a Value Type variable (char, int etc.) to a Reference Type variable (object or any interface type implemented by the value type)
-* -> **`Unboxing`** - is an explicit conversion process
+* -> **`Unboxing`** - is an explicit conversion process of converting a Reference Type variable to Value Type
 
 ```cs - boxing
 // Boxing to 'object'
@@ -200,7 +200,7 @@ int i = (int)Obj;    // Unboxing
 
 ### System.Text.StringBuilder
 * System.Text.StringBuilder objects are **`mutable`** 
-* `allow to modify` the contents of the string without creating a new instance
+* `allow to modify` the contents of the string without creating a new instance (_performance and memory efficiency for frequent changes_)
 * provides additional methods and properties specifically for `string manipulation`: _Append, Insert, Remove, Replace,..._
 
 ## "using" statement
