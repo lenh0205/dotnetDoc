@@ -24,10 +24,6 @@
 # Ngoài ra những kết nối khác như kết nối với database không được kiểm soát và đóng lại đúng cách gây hao tốn tài nguyên của server
 ```
 
-###  Important in Distributed Systems and microservices
-* -> these system often manage critical and long-running processes, involve numerous dependencies, and maintain persistent connections to other services or clients
-* -> and multiple services work together to complete a task, a forceful shutdown of one service can disrupt the entire system
-
 ### Target
 * _in a microservices architecture, each service must be designed to **`handle graceful shutdowns independently while coordinating with other services`**_
 * -> **`Stop Accepting New Requests`**: The service should stop accepting new incoming traffic but continue processing ongoing requests.
@@ -72,6 +68,10 @@ In a microservices environment, it’s important to inform upstream and downstre
 * -> **`Monitor the Shutdown Process`**: Use logging and monitoring tools to track how gracefully the shutdown process is executed, identifying potential bottlenecks or failures.
 * -> **`Test Regularly`**: Regularly test the graceful shutdown process in staging environments to catch any edge cases and validate that the system behaves as expected during real-world shutdowns.
 * -> **`Manage Dependencies`**: Ensure services are aware of dependencies, both upstream and downstream, and shut down in the correct sequence to avoid cascading failures.
+
+###  Important in Distributed Systems and microservices
+* -> these system often manage critical and long-running processes, involve numerous dependencies, and maintain persistent connections to other services or clients
+* -> and multiple services work together to complete a task, a forceful shutdown of one service can disrupt the entire system
 
 ### Testing Graceful Shutdown
 * _involves simulating real-world shutdowns, such as during deployments, scaling, or hardware failures:_
