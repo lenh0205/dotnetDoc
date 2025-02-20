@@ -61,11 +61,6 @@ GC.Collect();
 GC.WaitForPendingFinalizers();
 ```
 
-## 25. DI in .NET ?
-* -> a design pattern to achieve **`loose coupling`** between classes - instead of object directly create instance and depend on them, they will receive instance from DI Container
-* -> 3 main types of DI: Constructor Injection (Most common), Method Injection, Property Injection
-* -> basic steps: define interface; define service implement interface; register to IServiceCollection and specific lifetime with AddScoped, AddSingleton, AddTransitent 
-
 ## 19. Import export excel - PDF xài thư viện gì ?
 * EPPlus, iTextSharp
 
