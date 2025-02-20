@@ -11,14 +11,15 @@
 
 ## 6. what is SOLID, which case to use it ?
 * The SOLID principles are used in object-oriented programming to design systems that are modular, maintainable, and scalable
+ 
+## 25. DI in .NET ?
+* -> a design pattern to achieve **`loose coupling`** (Inversion of Control) between class and dependencies - instead of object directly create instance and depend on them, they will receive instance from DI Container
 
-## 1. Dependency Injection
-* a design pattern to achieve `Inversion of Control` between class and dependencies
-### Process
-* use of an `interface or base class` to abstract the dependency implementation
-* Registration of the dependency in a service container (.NET provide IServiceProvider)
-* Inject of the service into the constructor of the class
-* DI framework create instance of dependency and disposing of it when no longer needed 
+* -> basic steps: 
+- use of an `interface or base class` to abstract the dependency implementation; 
+- registration of the dependency in a service container (.NET provide IServiceProvider) with specific lifetime with AddScoped, AddSingleton, AddTransitent 
+- Inject of the service into the class through Constructor Injection (Most common), Method Injection, Property Injection
+* => DI framework create instance of dependency and disposing of it when no longer needed
 
 ## Transaction and ACID propterties
 ### Transaction
