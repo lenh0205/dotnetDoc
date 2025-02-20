@@ -42,16 +42,11 @@
 
 ## Repository and Unit of Work Design Patterns 
 ### Unit of Work 
-* manage multiple operations within **`a single transaction`** to ensure `consistency and atomicity` of changes made to a database
-* by grouping related operations into a single unit of work, treat them as a logical transaction
-* `Add a middle layer between the Controller and the Repository` -> This class will centralize storage for all related Repository to share 1 instance of DbContext.
+* -> this class will centralize storage for all related Repository to share 1 instance of DbContext.
+* -> from that, it manage multiple operations within **`a single logical transaction`** to ensure `consistency and atomicity` of changes made to a database
+* _responsible for initiating database operations, tracking changes, and committing or rolling back the transaction_
 
-* The Unit of Work object is responsible for initiating database operations, tracking changes, and committing or rolling back the transaction
 ### Repository
-* The Repository pattern is a design pattern that provides `an abstraction layer` between DAL (the data access logic) and Business (Business Service Layer)
-
-* encapsulate the `data access operations`, provide a consistent interface (or classes) define the operations for working with data entities (promote separation of concerns)
-
-* interfaces provide a contract for the application to interact with the database without exposing the underlying implementation details (querying the database, updating records)
-
+* is a design pattern that provides `an abstraction layer` on top of Data Access Layer
+* encapsulate the `data access operations`, only provide a consistent interface (or classes) for working with data entities (_promote separation of concerns_)
 
