@@ -86,6 +86,9 @@
 * All instances of the class can access and modify the same value of the static field
 * A static constructor is `called only once`, before any instances of the class are created, and it is primarily used for `initializing static fields` or performing other `initialization tasks` related to the class
 
+## 6. what is SOLID, which case to use it ?
+* The SOLID principles are used in object-oriented programming to design systems that are modular, maintainable, and scalable
+
 ## 11. const - readonly
 * used to declare constants
 ### const
