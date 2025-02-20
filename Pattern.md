@@ -8,9 +8,6 @@
 * `Uniform interface`: RESTful APIs typically use a uniform set of `well-defined methods and data formats`. (_In the case of ASP.NET Core WebAPI, the HTTP methods (GET, POST, PUT, etc.) are used, and data is often exchanged in JSON format_)
 * `Hypermedia as the engine of application state` (HATEOAS): RESTful APIs can include hypermedia links in the response to guide clients on how to interact with the API (_These links provide information about related resources and available actions_)
 * `Caching and scalability`: RESTful APIs can leverage caching mechanisms provided by the HTTP protocol to improve performance and scalability. Clients and intermediate proxies can cache responses based on cache control headers provided by the server. 
-
-## 6. what is SOLID, which case to use it ?
-* The SOLID principles are used in object-oriented programming to design systems that are modular, maintainable, and scalable
  
 ## 25. DI in .NET ?
 * -> a design pattern to achieve **`loose coupling`** (Inversion of Control) between class and dependencies - instead of object directly create instance and depend on them, they will receive instance from DI Container
