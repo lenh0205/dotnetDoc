@@ -61,6 +61,11 @@ GC.Collect();
 GC.WaitForPendingFinalizers();
 ```
 
+## 18. .NET Framework
+* -> .NET Framework is a software development platform developed by Microsoft
+* -> used to develop multiple type of applications such as web applications, mobile applications, Windows applications,... 
+* -> supports many programming languages ​​such as C#, Visual Basic, F#, C++, Visual Basic .NET,...
+
 ## 19. Import export excel - PDF xài thư viện gì ?
 * EPPlus, iTextSharp
 
