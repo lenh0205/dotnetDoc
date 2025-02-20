@@ -87,7 +87,221 @@
 * A static constructor is `called only once`, before any instances of the class are created, and it is primarily used for `initializing static fields` or performing other `initialization tasks` related to the class
 
 ## 6. what is SOLID, which case to use it ?
-* The SOLID principles are used in object-oriented programming to design systems that are modular, maintainable, and scalable
+*  are five key design principles in object-oriented programming that help create maintainable, scalable, and testable software
+
+### S - Single Responsibility Principle (SRP)
+* -> a class should have only one reason to change
+* _it should have only one responsibility (e.g., handling business logic, not also handling file operations)_
+```cs
+// from - a class has two responsibilities:
+public class Report
+{
+    public void GenerateReport() 
+    {
+        Console.WriteLine("Generating report...");
+    }
+
+    public void SaveToFile(string filename) 
+    {
+        File.WriteAllText(filename, "Report content");
+    }
+}
+
+// refactoring to - 2 class with 2 responsibilities:
+public class Report
+{
+    public string GenerateReport() 
+    {
+        return "Report content";
+    }
+}
+
+public class FileManager
+{
+    public void SaveToFile(string filename, string content) 
+    {
+        File.WriteAllText(filename, content);
+    }
+}
+```
+
+### O - Open/Closed Principle (OCP)
+* -> a class should be open for extension but closed for modification.
+* _we should be able to add new functionality without modifying existing code, typically **`using abstraction`** (interfaces, inheritance, or composition)_
+```cs
+// from - requiring to modify this class every time a new customer type is added
+public class DiscountCalculator
+{
+    public double CalculateDiscount(string customerType, double amount)
+    {
+        if (customerType == "Regular")
+            return amount * 0.1;
+        else if (customerType == "Premium")
+            return amount * 0.2;
+        else
+            return amount * 0.05;
+    }
+}
+
+// refactoring to - just need to add new "DiscountStrategy" when business changes without modyfying DiscountCalculator
+public class DiscountCalculator
+{
+    // depend on abstraction
+    public double CalculateDiscount(IDiscountStrategy discountStrategy, double amount)
+    {
+        return discountStrategy.ApplyDiscount(amount);
+    }
+}
+public interface IDiscountStrategy
+{
+    double ApplyDiscount(double amount);
+}
+
+public class RegularCustomerDiscount : IDiscountStrategy
+{
+    public double ApplyDiscount(double amount) => amount * 0.1;
+}
+public class PremiumCustomerDiscount : IDiscountStrategy
+{
+    public double ApplyDiscount(double amount) => amount * 0.2;
+}
+```
+
+### L - Liskov Substitution Principle (LSP)
+* -> **Subclasses** should be **`replaceable`** for their **base classes** without affecting functionality.
+* _a derived class should honor the contract of the base class (e.g., not remove expected behavior)_
+```cs
+// from - wrong behavior when try to inherit base class 
+// -> có thể là vấn đề là do thằng base class đang bị viết sai; hoặc thằng kìa đang inherit sai base class
+public class Bird
+{
+    public virtual void Fly()
+    {
+        Console.WriteLine("Bird is flying");
+    }
+}
+public class Penguin : Bird
+{
+    public override void Fly()
+    {
+        throw new Exception("Penguins can't fly!");
+    }
+}
+
+// refactor to - update the base class: 
+public abstract class Bird { }
+
+public class FlyingBird : Bird
+{
+    public void Fly()
+    {
+        Console.WriteLine("Bird is flying");
+    }
+}
+public class Penguin : Bird
+{
+    public void Swim()
+    {
+        Console.WriteLine("Penguin is swimming");
+    }
+}
+```
+
+### I - Interface Segregation Principle (ISP)
+* -> **clients** should **not be forced to depend on interfaces** they don't use.
+* _instead of one large interface, create smaller, **`more specific interfaces`** tailored to the actual needs_
+```cs
+// from:
+public interface IWorker
+{
+    void Work();
+    void Eat();
+}
+
+public class Robot : IWorker
+{
+    public void Work()
+    {
+        Console.WriteLine("Robot is working...");
+    }
+
+    public void Eat()
+    {
+        throw new Exception("Robot doesn't eat!");
+    }
+}
+
+// refactoring to:
+public interface IWorkable
+{
+    void Work();
+}
+public interface IEatable
+{
+    void Eat();
+}
+
+public class Human : IWorkable, IEatable
+{
+    public void Work() => Console.WriteLine("Human is working...");
+    public void Eat() => Console.WriteLine("Human is eating...");
+}
+public class Robot : IWorkable
+{
+    public void Work() => Console.WriteLine("Robot is working...");
+}
+```
+
+### D - Dependency Inversion Principle (DIP)
+* -> high-level modules should not depend on low-level modules; both should **`depend on abstractions`**
+* _this promotes loose coupling and allows easier changes and testing_
+```cs
+// from:
+public class LightBulb
+{
+    public void TurnOn() => Console.WriteLine("Light is ON");
+    public void TurnOff() => Console.WriteLine("Light is OFF");
+}
+
+public class Switch
+{
+    private LightBulb _bulb = new LightBulb();
+
+    public void Operate()
+    {
+        _bulb.TurnOn();
+    }
+}
+
+// refactoring to:
+public interface IDevice
+{
+    void TurnOn();
+    void TurnOff();
+}
+
+public class LightBulb : IDevice
+{
+    public void TurnOn() => Console.WriteLine("Light is ON");
+    public void TurnOff() => Console.WriteLine("Light is OFF");
+}
+
+public class Switch
+{
+    private readonly IDevice _device;
+
+    public Switch(IDevice device)
+    {
+        _device = device;
+    }
+
+    public void Operate()
+    {
+        _device.TurnOn();
+    }
+}
+```
+
 
 ## 11. const - readonly
 * used to declare constants
