@@ -34,12 +34,13 @@
 * Overall, this project was a great learning experience and helped me sharpen my technical skills while working in a collaborative environment.
 
 # most difficult issue that you have faced ?
-* I think when I try to integrate the digital signature service as a desktop app to my website; this is my first time doing feature like this
-* the problem is that the document is only instruct about how to integrate it to an ASP.NET Mvc project
-* so there is fail HTTP communication between React app and ASP.NET Core Web API when I try to apply it to my project
-* so what I do is initiate a simple ASP.NET Mvc project and apply the integration successfully  
+* -> One of the most difficult issues I faced was integrating a digital signature service into my web application. This was my first time working on such a feature, and the service provider’s documentation only covered integration with an ASP.NET MVC project, whereas my project was built with React and ASP.NET Core Web API.
+* -> When I initially attempted the integration, I encountered HTTP communication failures between the React frontend and the ASP.NET Core Web API. To troubleshoot, I first set up a simple ASP.NET MVC project and successfully integrated the digital signature service as described in the documentation. Through this, I discovered that the service used WebSockets for communication between the desktop application and the website, while file uploads were handled via HTTP.
+* -> With this understanding, I analyzed the minified JavaScript file that was included in the ASP.NET MVC view. I used ChatGPT to help unminify the script and rename variables to better understand the WebSocket events. This allowed me to figure out how to call the necessary functions correctly within my React project.
+* -> Additionally, I used Fiddler to capture HTTP requests from the desktop application to my web system. This helped me identify missing request headers and ensure the communication worked as expected.
+* -> Ultimately, by combining a structured debugging approach, reverse engineering, and utilizing debugging tools, I was able to successfully integrate the digital signature service into my project
 
-# how to catch up on new/big project? (how to transfer? how to get knowldge? what if have no good documentation...)
+# how to catch up on new/big project? (how to transfer? how to get knowledge? what if have no good documentation...)
 
 	
 # how to handle production issue?
