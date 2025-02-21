@@ -25,18 +25,13 @@
 * -> The reason for this architecture was that DotNetNuke CMS only supported .NET Framework modules. 
 * -> However, to build a modern, responsive, and efficient website with faster development cycles and a better user experience, we chose React for the front end. This approach allowed us to offload UI rendering from the CMS while maintaining compatibility with its limitations.
 
-* I had the opportunity to explore various technologies and design patterns, such as:
-- UnitOfWork pattern for better data management,
-- FluentValidation to simplify validation logic,
-- Automapper for seamless object mapping,
-- React for the frontend, where we built a custom application,
-- And extensive unit testing to ensure reliability.
+* I had the opportunity to explore various technologies and design patterns, such as: 
+* _UnitOfWork pattern for better data management, FluentValidation to simplify validation logic, Automapper for seamless object mapping, React for the frontend, where we built a custom application, And extensive unit testing to ensure reliability_
 
 * The project was developed by a team of five, following the Agile process, where we used Jira for tracking tasks and Confluence for documentation. 
 * In this project, I contributed as a full-stack developer, handling both backend and frontend development.
 
 * Overall, this project was a great learning experience and helped me sharpen my technical skills while working in a collaborative environment.
-
 
 # most difficult issue that you have faced ?
 * I think when I try to integrate the digital signature service as a desktop app to my website; this is my first time doing feature like this
@@ -50,7 +45,7 @@
 # how to handle production issue?
 * -> ta nên get a stable copy of production before your deploy và chạy nó lên (_có 1 **CI/CD pipeline** sẽ rất là tiện_) đảm bảo how quickly we could get a working version deployed and available for users again
 * -> Debugging problem
-* -> ghi lại tất cả những gì ta làm, gặp, để ý được trong quá trình debug
+* -> document everything we do, encounter, and notice during the debugging process (_Ví dụ khi ta giao việc debug lại cho người khác họ sẽ không phải bắt đầu lại từ đầu)
 
 ## Structured Steps for Debugging 
 * _though **`developer's assumptions`** are key as they have a history with the product, the **`logs`** never lie_
