@@ -6,12 +6,26 @@
 
 * These diverse experiences have allowed me to adapt to different project complexities and collaborate effectively with cross-functional teams to deliver high-quality solutions
 
+## what is a 'high-quality solution' in web development?
+* https://www.acquia.com/blog/crucial-website-quality-assurance-factors
+* https://www.ease.io/blog/14-metrics-every-quality-exec-should-monitor-how-to-calculate-them/
+* https://www.kdci.co/outsourcing-blog/post/quality-assurance-in-web-development
+* https://www.researchgate.net/publication/316883982_Quality_assurance_of_web_services_A_systematic_literature_review
+
 # Describe your favorite/last project ?
 * My favorite project would be my last one—a Document Management System for a government organization
 * The goal was to improve transparency and efficiency in document management.
 
-* What made this project particularly interesting for me was its technical diversity. 
-* It required working with both .NET Core and .NET Framework modules, integrating server-side rendering and client-side rendering. I had the opportunity to explore various technologies and design patterns, such as:
+* What made this project particularly interesting for me was its **`technical diversity`** 
+* -> The project involved working with both the .NET Framework and the unified .NET platform, integrating a CMS that supported both server-side rendering (SSR) and client-side rendering (CSR).
+* -> it was built on DotNetNuke CMS, which supported two main modules
+* -> the first module was an ASP.NET MVC 5 web application, responsible for structuring the UI based on different menu items. However, most of the UI for each view was rendered dynamically using a bundled React project.
+* -> to ensure security and modularity, we introduced an intermediate layer built as a Web API on .NET Framework. This API acted as a bridge, receiving requests from the ASP.NET MVC 5 module and forwarding them to the ASP.NET Core Web API.
+* -> The ASP.NET Core Web API then handled data retrieval by interacting with a WCF Client, which encapsulated stored procedure calls to SQL Server.
+* -> The reason for this architecture was that DotNetNuke CMS only supported .NET Framework modules. 
+* -> However, to build a modern, responsive, and efficient website with faster development cycles and a better user experience, we chose React for the front end. This approach allowed us to offload UI rendering from the CMS while maintaining compatibility with its limitations.
+
+* I had the opportunity to explore various technologies and design patterns, such as:
 - UnitOfWork pattern for better data management,
 - FluentValidation to simplify validation logic,
 - Automapper for seamless object mapping,
@@ -23,6 +37,7 @@
 
 * Overall, this project was a great learning experience and helped me sharpen my technical skills while working in a collaborative environment.
 
+
 # most difficult issue that you have faced ?
 * I think when I try to integrate the digital signature service as a desktop app to my website; this is my first time doing feature like this
 * the problem is that the document is only instruct about how to integrate it to an ASP.NET Mvc project
@@ -31,11 +46,6 @@
 
 # how to catch up on new/big project? (how to transfer? how to get knowldge? what if have no good documentation...)
 
-# what is a 'high-quality solution' in web development?
-* https://www.acquia.com/blog/crucial-website-quality-assurance-factors
-* https://www.ease.io/blog/14-metrics-every-quality-exec-should-monitor-how-to-calculate-them/
-* https://www.kdci.co/outsourcing-blog/post/quality-assurance-in-web-development
-* https://www.researchgate.net/publication/316883982_Quality_assurance_of_web_services_A_systematic_literature_review
 	
 # how to handle production issue?
 * -> ta nên get a stable copy of production before your deploy và chạy nó lên (_có 1 **CI/CD pipeline** sẽ rất là tiện_) đảm bảo how quickly we could get a working version deployed and available for users again
