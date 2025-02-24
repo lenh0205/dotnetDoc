@@ -67,6 +67,7 @@ GC.WaitForPendingFinalizers();
 ```
 
 ## 16. .NET implementation / sự khác biệt giữa .NET Framework, .NET Core, .NET Standard
+* _https://learn.microsoft.com/en-us/dotnet/standard/choosing-core-framework-server_
 * -> **.NET Framework** - is the original .NET implementation (not open source) supports running websites, services, desktop apps, and more on **`Windows`** (_chỉ có một số components là open source_)
 * -> **.NET Core** - an open-source that release later to enable **`cross-platform support`** for .NET developers
 * -> **.NET Standard** - a formal specification of different APIs so that **`different .NET implementations can reuse the same code and libraries`** and also use their own unique APIs specific to the operating systems it runs on
