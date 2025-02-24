@@ -1,18 +1,23 @@
-## 2. What is the Common Language Runtime (CLR)
-* -> CLR is the `.NET Runtime environment` (is the basic and Virtual Machine component of the .NET Framework for managing the **`execution of .NET programs`** (regardless of any .NET programming language)
+## 2. What is .NET Runtime - what is the Common Language Runtime (CLR)
+* -> the **`.NET runtime`** also called **`Common Language Runtime (CLR)`**
+* -> is the basic and **Virtual Machine** component of the .NET for **`compiles`** (Just-in-time compilation) and **`executes`** (execution of CIL code) .NET programs on different operating systems (regardless of any .NET programming language)
 * -> provides: garbage collection, security, and exception handling, `JIT`
 
 ### JIT (Just-In-Time) .NET compiler
 * at runtime, it translate the **`intermediate code`** into **`native machine code just-in-time`** - optimized machine code specific to OS and processor architecture
 
 ### Process
-* -> in build process, **`C# Compiler (csc.exe)`** compile **`C# code`** to **`intermediate code (CIL/MSIL)`** 
+* -> in build process, **`C# Compiler (csc.exe)`** compile **`C# code`** to **`intermediate code (CIL/MSIL)`**  (a lower-level machine code language)
 * -> and package it along with **`metadata`** (information about types, methods, references, ... for .NET Runtime to load and execute the assembly) into **`assemblies`** (like `.exe or .dll files`)
 
  ->  when running application, lúc này **`CLR`** mới tham dự, nó sử dụng **`JIT Compiler`** để convert intermediate code into **`machine code`** -> executed by the processor (CPU)
 
 * _CIL - Common Intermediate Language_
 * _MSIL - Microsoft Intermediate Language_
+
+## 8. the components of .NET architecture?
+* -> 3 main .NET components: .NET languages, Application model frameworks, .NET runtime
+* _developers use .NET programming "languages" and "application model frameworks" to create their .NET applications, then ".NET runtime" then executes and runs them_
 
 ## 7. What are the advantages of ASP.NET Core over ASP.NET
 * `Cross-platform compatibility`: ASP.NET Core is designed to be cross-platform and runs on Windows, macOS, and Linux, 
@@ -60,6 +65,11 @@
 GC.Collect();
 GC.WaitForPendingFinalizers();
 ```
+
+## 16. .NET implementation / sự khác biệt giữa .NET Framework, .NET Core, .NET Standard
+* -> **.NET Framework** - is the original .NET implementation (not open source) supports running websites, services, desktop apps, and more on **`Windows`** (_chỉ có một số components là open source_)
+* -> **.NET Core** - an open-source that release later to enable **`cross-platform support`** for .NET developers
+* -> **.NET Standard** - a formal specification of different APIs so that **`different .NET implementations can reuse the same code and libraries`** and also use their own unique APIs specific to the operating systems it runs on
 
 ## 18. .NET Framework
 * -> .NET Framework is a software development platform developed by Microsoft
