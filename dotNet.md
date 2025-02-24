@@ -7,7 +7,7 @@
 * at runtime, it translate the **`intermediate code`** into **`native machine code just-in-time`** - optimized machine code specific to OS and processor architecture
 
 ### Process
-* -> in build process, **`C# Compiler (csc.exe)`** compile **`C# code`** to **`intermediate code (CIL/MSIL)`**  (a lower-level machine code language)
+* -> in build process, **`C# Compiler (csc.exe)`** (_part of .NET SDK, not CLR_) compile **`C# code`** to **`intermediate code (CIL/MSIL)`**  (a lower-level machine code language)
 * -> and package it along with **`metadata`** (information about types, methods, references, ... for .NET Runtime to load and execute the assembly) into **`assemblies`** (like `.exe or .dll files`)
 
  ->  when running application, lúc này **`CLR`** mới tham dự, nó sử dụng **`JIT Compiler`** để convert intermediate code into **`machine code`** -> executed by the processor (CPU)
