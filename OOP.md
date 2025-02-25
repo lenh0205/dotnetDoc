@@ -109,6 +109,44 @@ class Test
 }
 ```
 
+## 15. "sealed" keyword ?
+* -> prevents the **`class from being inherited`**
+* -> prevents **`further overriding of a 'inherited virtual members' (method or property)`** in derived classes
+* (_Ex: only apply to methods that are overriding a virtual method; prevent method overriding only, not overloading_
+
+```cs
+// -----> class
+sealed class MyClass
+{
+}
+class DerivedClass : MyClass // throw compile-time error
+{
+}
+
+// -----> inherited virtual members
+class BaseClass
+{
+    public virtual void Show()
+    {
+        Console.WriteLine("BaseClass Show");
+    }
+}
+class DerivedClass : BaseClass
+{
+    public sealed override void Show() // Sealed prevents further overrides
+    {
+        Console.WriteLine("DerivedClass Show");
+    }
+}
+
+class AnotherDerivedClass : DerivedClass
+{
+    public override void Show() // compile time error: cannot override because it's sealed
+    {
+    }
+}
+```
+
 ### Abstract class vs Interface
 #### Definition:
 * An `abstract class` is `a class` that cannot be instantiated, can contain a mixture of `implemented and abstract members`
