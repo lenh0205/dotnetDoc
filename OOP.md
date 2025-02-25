@@ -433,6 +433,7 @@ public Circle(double radius)
 * Inside the method, we can read and modify the value of the variable. 
 * Any changes made to the parameter inside the method will **`affect the original variable`**
 ```
+// -----> value type
 void ModifyValue(ref int number)
 {
     number = 10;
@@ -440,7 +441,29 @@ void ModifyValue(ref int number)
 
 int value = 5;
 ModifyValue(ref value);
-Console.WriteLine(value); // Output: 10 
+Console.WriteLine(value); // Output: 10
+
+// -----> reference type
+void ChangeObject(ref Person p)
+{
+    p = new Person { Name = "New Name" };
+}
+
+Person person = new Person { Name = "Old Name" };
+ChangeObject(ref person);
+Console.WriteLine(person.Name); // Output: "New Name"
+
+// -----> without "ref"
+// when we pass a reference type without using "ref" or "out", we are passing a copy of the reference, not the actual reference itself
+void ChangeName(Person p)
+{
+    p.Name = "New Name";  // ✅ This works because we are modifying the object itself.
+    p = new Person { Name = "Another Person" }; // ❌ This does NOT affect the original reference outside the method.
+}
+Person person = new Person { Name = "Old Name" };
+ChangeName(person);
+Console.WriteLine(person.Name); // Output: "New Name" (Original reference is still pointing to the same object)
+
 ```
 
 ### out
