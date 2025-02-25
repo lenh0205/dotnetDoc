@@ -51,6 +51,8 @@
 * **`private protected`** - a member can be accessed only within **`the same class or by derived classes that are in the same assembly`**
 * **`private`** - restricts access to the member within the **same class**; it is the **`default access modifier`** for class members if no access modifier is specified
 
+* _there is some things worth noting: in c# 11, **`file`** is a special modifier (not access modifier) that applies only to **classes, structs, interfaces, and delegates** to **restricts access to the same source file** (not just the same assembly)_
+
 ```cs
 // -----> using "internal"
 
