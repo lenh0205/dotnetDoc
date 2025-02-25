@@ -11,15 +11,16 @@
 
 ### 4 pillars of OOP:
 #### Encapsulation
-* control how the information is being accessed and what operations are performed on it
+* separate information, logic into groups and control how each group is accessed and what actions can be performed on them. 
 * triển khai bằng **`access specifiers`**: public, private, protected, internal
 
 #### Abstraction:
 * hiding certain details and showing only essential information to the user
+* ensure that client only use a consistence information without caring about what happen under the hood
 * achieved with either **`abstract classes`** or **`interfaces`**
 
 #### Inheritance
-* inherit fields and methods from one class to another
+* all about "reusing consistence code" - means that when classA inherit classB, it may use the available logic it need from class B without rewrite these logic
 * to inherit from a class, use the "derive" term - **`":"`**
 * use the **`sealed`** keyword to prevent other classes to inherit 
 
