@@ -11,7 +11,7 @@
 
 ### 4 pillars of OOP:
 #### Encapsulation
-* monitor how the information is being accessed and what operations are performed on it
+* control how the information is being accessed and what operations are performed on it
 * triển khai bằng **`access specifiers`**: public, private, protected, internal
 
 #### Abstraction:
