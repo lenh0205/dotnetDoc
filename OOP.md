@@ -44,12 +44,68 @@
 * to override the base class method -> adding the **`virtual`** keyword to the method inside the base class; using the **`override`** keyword for each derived class methods
 
 ### Access specifier/ Access modifier
-* **`public`** - allows a member to be accessed from any other code within the _`same assembly`_ or `from other assemblies` that reference it
-* **`protected internal`** - allows a member to be accessed within the `same assembly` or `by derived classes in other assemblies`
-* **`internal`** - allows a member to be accessed from any code within the _`same assembly`_ but not from other assemblies.
-* **`protected`** - allows a member to be accessed within the _`same class` or `by derived classes`_ in any assembly
-* **`private protected`** - allows a member to be accessed within the _`same class` or `by derived classes in the same assembly`_
-* **`private`** - restricts access to the member within the `same class`; It is the **`default access modifier`** for class members if no access modifier is specified
+* **`public`** - allows a member to be accessed from any other code in the **same assembly** or **any other assembly that references it**
+* **`protected`** - allows a member to be accessed only within the **same class** or **in derived classes even if they are in a different assembly**
+* **`internal`** - allows a member to be accessed from any code within the **same assembly** but not from another assembly (unless using `InternalsVisibleTo`)
+* **`protected internal`** - a member is accessible in the **same assembly** and accessible **in derived classes even if they are in a different assembly** 
+* **`private protected`** - a member can be accessed only within **`the same class or by derived classes that are in the same assembly`**
+* **`private`** - restricts access to the member within the **same class**; it is the **`default access modifier`** for class members if no access modifier is specified
+
+```cs
+// -----> using "internal"
+
+// project: MyLibrary.dll
+internal class InternalClass
+{
+    public void ShowMessage()
+    {
+        Console.WriteLine("This is an internal class!");
+    }
+}
+public class PublicClass
+{
+    internal void InternalMethod()
+    {
+        Console.WriteLine("Internal method called");
+    }
+}
+
+// project: ConsoleApp.exe (Different Assembly)
+using MyLibrary;
+
+class Program
+{
+    static void Main()
+    {
+        InternalClass obj = new InternalClass(); // ❌ ERROR: InternalClass is inaccessible
+
+        PublicClass obj = new PublicClass();
+        obj.InternalMethod(); // ❌ ERROR: InternalMethod is inaccessible
+    }
+}
+
+// -----> using "InternalsVisibleTo" - specific another assembly (that reference to origin) that is allow to access internal members
+
+// AssemblyInfo.cs (MyLibrary.dll)
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("TestProject")]
+
+// InternalClass (MyLibrary.dll)
+internal class InternalClass
+{
+    public string GetData() => "Internal Data";
+}
+
+// TestProject (Another Assembly)
+class Test
+{
+    static void Main()
+    {
+        InternalClass obj = new InternalClass(); // ✅ Now accessible due to InternalsVisibleTo
+        Console.WriteLine(obj.GetData());
+    }
+}
+```
 
 ### Abstract class vs Interface
 #### Definition:
