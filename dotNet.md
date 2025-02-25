@@ -1,6 +1,6 @@
 ## 2. What is .NET Runtime - what is the Common Language Runtime (CLR)
 * -> the **`.NET runtime`** also called **`Common Language Runtime (CLR)`**
-* -> is the basic and **Virtual Machine** component of the .NET for **`compiles`** (Just-in-time compilation) and **`executes`** (execution of CIL code) .NET programs on different operating systems (regardless of any .NET programming language)
+* -> is the basic and **Virtual Machine** component of the .NET for managing the execution of .NET programs - **`compiles`** (Just-in-time compilation) and **`executes`** (execution of CIL code) .NET programs on different operating systems (regardless of any .NET programming language)
 * -> provides: garbage collection, security, and exception handling, `JIT`
 
 ### JIT (Just-In-Time) .NET compiler
