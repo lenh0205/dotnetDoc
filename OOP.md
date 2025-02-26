@@ -396,24 +396,59 @@ public class Switch
 ```
 
 
-## 11. const - readonly
-* used to declare constants
-### const
-* const fields are **implicitly `static`**, meaning they can be accessed using the type name without creating an instance of the class
-* a const field represents a `compile-time constant` -> value is `evaluated and assigned at compile-time`
-* value can be only `assigned` at the time of **`declaration`** of class and cannot be modified afterwards.
-* const fields can only hold `simple value types` (numeric types, boolean, characters, strings, etc.) 
-* const fields must be initialized with `a constant expression`
+## 11. const - readonly - static
+
+### static
+* -> define a member that **`belongs to the class itself rather than an instance of the class`**
+* -> a "static" field can be **`changed at runtime`** and can hold any type of data
+* -> a static method can only access other static members
+
+```cs
+class Example
+{
+    public static int StaticValue = 10; // Belongs to the class
+
+    public static void PrintValue()
+    {
+        Console.WriteLine($"Static Value: {StaticValue}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Example.PrintValue(); // 10
+        Example.StaticValue = 20; // Can be modified
+        Example.PrintValue(); // 20
+    }
+}
 ```
-public const int MaxValue = 100;
+
+### const
+* used to declare **`compile-time constants`** - const fields **must be assigned a value at the time of declaration** and **cannot be changed later**
+* const fields are **`implicitly static`**, meaning they can be accessed using the type name without creating an instance of the class
+* const fields can only hold `simple value types` (numeric types, boolean, characters, strings, etc.) 
+```cs
+class Example
+{
+    public const double Pi = 3.14159; // Must be initialized at declaration
+}
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine($"Value of Pi: {Example.Pi}");
+        // Example.Pi = 3.14; // ERROR: Cannot modify a const field
+    }
+}s
 ```
 
 ### readonly:
-* a readonly field represents a `runtime constant` -> value is `evaluated and assigned at runtime`
-* value can be only `assigned` at the time of **`declaration`** or **`within the constructor`** of class and cannot be modified after the constructor finishes executing
+* a readonly field represents a **`runtime constant`** - value is **evaluated and assigned at runtime**
+* value can be only assigned at the time of **`declaration`** or **`within the constructor`** of class and cannot be modified after the constructor finishes executing
 * readonly fields can hold `any type of value`, including complex objects.
-* readonly fields can be initialized with `different values for different instances of a class`
-```
+```cs
 private readonly double _pi;
 private readonly double _radius;
 
@@ -432,7 +467,7 @@ public Circle(double radius)
 * the `variable passed as an argument` **`must be initialized`** before being passed to the method. 
 * Inside the method, we can read and modify the value of the variable. 
 * Any changes made to the parameter inside the method will **`affect the original variable`**
-```
+```cs
 // -----> value type
 void ModifyValue(ref int number)
 {
@@ -463,14 +498,13 @@ void ChangeName(Person p)
 Person person = new Person { Name = "Old Name" };
 ChangeName(person);
 Console.WriteLine(person.Name); // Output: "New Name" (Original reference is still pointing to the same object)
-
 ```
 
 ### out
 * almost like **`ref`**
 * but the `variable passed as an argument` does **`not need to be initialized`** before being passed to the method. 
 * Inside the method, we **`must assign a value`** to the `out parameter` before the method returns
-```
+```cs
 void InitializeValue(out int number)
 {
     number = 10;
@@ -479,4 +513,111 @@ void InitializeValue(out int number)
 int value;
 InitializeValue(out value);
 Console.WriteLine(value);  // Output: 10
+```
+
+## 11. Partial class
+* -> provides a special ability to implement the functionality of a single class into multiple files and all these files are combined into a single class file when the application is compiled
+
+### Prerequisite
+* -> "Partial" modifier can only be **present instantly before** the keywords like **`struct, class, and interface`**
+* -> **every part** should be in the **`same assembly and namespace`**
+* -> if **any part is abstract, sealed, or base**, the **`entire class follows that rule`**
+* -> a partial class can have **`nested partial types`**
+
+```cs
+//  File1.cs
+namespace MyNamespace { // same namespace
+    public abstract partial class Sample : Base1, IFirst {
+        public void Method1() => Console.WriteLine("Method1");
+
+        // allowed to use nested partial types
+        public partial class Inner {
+            public void Display() => Console.WriteLine("Nested Partial Class");
+        }
+    }
+}
+
+// File2.cs
+namespace MyNamespace { // same namespace
+    // ✅ Allowed because the final "Sample" class is still "abstract class"
+    // ✅ Allowed, still one base class, implement multiple interfaces
+    public partial class Sample : ISecond { 
+        public void Method2() => Console.WriteLine("Method2");
+    }
+
+    // allowed to use nested partial types
+    public partial class Inner {
+        public void Show() => Console.WriteLine("Another Method in Nested Class");
+    }
+}
+
+// File3.cs
+namespace MyNamespace { // same namespace
+    // ❌ Compilation Error - Different accessibility level (public vs private)
+    // ❌ Compilation Error - Conflict between sealed and abstract
+    internal sealed partial class Sample { 
+        public void Method3() => Console.WriteLine("Method2");
+    }
+}
+
+
+// program.cs
+class Program {
+    static void Main() {
+        Sample obj = new Sample();
+        obj.Method1();
+        obj.Method2();
+    }
+}
+```
+
+## Use Case 
+* -> can split **the UI of the design code** and **the business logic code** to read and understand the code
+* _Partial classes are commonly used in UI frameworks like `WinForms and WPF`, where the **designer-generated UI code** is separated from **the developer-written logic**_
+
+```cs
+// in WinForms, when we create a form "Form1"; Visual Studio automatically generates two files: "Form1.Designer.cs" (UI design code - auto-generated) and "Form1.cs" (business logic)
+
+// Form1.Designer.cs (UI Code - Auto-Generated)
+partial class Form1 {
+    private System.Windows.Forms.Button myButton;
+
+    private void InitializeComponent() {
+        this.myButton = new System.Windows.Forms.Button();
+        this.myButton.Text = "Click Me";
+        this.myButton.Click += new System.EventHandler(this.MyButton_Click);
+    }
+}
+
+// Form1.cs (Business Logic)
+public partial class Form1 : Form {
+    public Form1() {
+        InitializeComponent(); // Calls the UI code from Designer.cs
+    }
+
+    private void MyButton_Click(object sender, EventArgs e) {
+        MessageBox.Show("Button clicked!"); // Business logic
+    }
+}
+```
+
+* -> when we were working with automatically generated code, the code can be added to the class without having to recreate the source file like in Visual studio
+* _Ex: **Entity Framework Auto-Generated Code in Database First approach**, Visual Studio automatically creates C# classes based on database tables_
+* _Let’s say Entity Framework generate "Customer" class for "Customer" table in a database_
+* _if we want to add a method like GetCustomerInfo(), we should NOT modify this file **`because Visual Studio might regenerate it and erase our changes`**_
+
+```cs
+// Customer.Generated.cs
+// This file is auto-generated. DO NOT modify it directly.
+public partial class Customer {
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+// create new file - Customer.cs
+public partial class Customer {
+    public string GetCustomerInfo() {
+        return $"Customer ID: {Id}, Name: {Name}";
+    }
+}
 ```

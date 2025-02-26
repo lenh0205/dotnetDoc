@@ -1,11 +1,82 @@
 ## 8. what is EntityFrameWork ?
-   - Có mấy cách làm việc với db trong EF codefirst, databasefirst....
 
 * Entity Framework is an `ORM framework` to simplify the process of database interaction by providing a higher-level abstraction over the underlying database 
 * -> work with data in terms of objects and classes rather than directly dealing with database tables, queries, and SQL statements
 * Entity Framework enables you to define your application's `data model` using classes and relationships, and it takes care of `mapping` these entities to the database tables, performing `CRUD` operations, and managing the underlying `database connections`
 
-### Briefly present Lazy Loading, Eager Loading, Explicit Loading in Entity Framework
+## 10. Có mấy cách làm việc với db trong EF 
+* -> **`codefirst`**
+* -> **`databasefirst`**
+
+## 9. Briefly present Lazy Loading, Eager Loading, Explicit Loading in Entity Framework
+
+### Usage
+* -> In Entity Framework Core, **`lazy loading is disabled by default`**; to enable lazy loading, we need to use **`proxies`** and **`mark navigation properties as virtual`** 
+* -> so in default case, 
+
+```cs
+// ----------> Enable 'Lazy loading'
+
+// -----> update DbContext
+using Microsoft.EntityFrameworkCore.Proxies; // install this NuGet package for lazy load proxy
+
+public class MyDbContext : DbContext
+{
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<Customer> Customers { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder
+            .UseSqlServer("YourConnectionString")
+            .UseLazyLoadingProxies(); // Enable lazy loading
+    }
+}
+
+// -----> Ensure navigation properties are 'virtual'
+public class Order
+{
+    public int Id { get; set; }
+    public string OrderNumber { get; set; }
+
+    // Must be virtual for lazy loading to work
+    public virtual Customer Customer { get; set; } // one-to-one relationship
+}
+public class Customer
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+// ------> usage
+var order = db.Orders.FirstOrDefault();
+var customer = order.Customer; // loaded automatically without calling .Include() or .Load()
+```
+
+```cs
+// -> to strict control over when related data is loaded - globally disable lazy loading in DbContext
+// -> we can use "ChangeTracker.LazyLoadingEnabled = false;"
+public class MyDbContext : DbContext
+{
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        ChangeTracker.LazyLoadingEnabled = false; // Disable lazy loading
+    }
+}
+
+public class MyDbContext : DbContext
+{
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        ChangeTracker.LazyLoadingEnabled = false; // Disable lazy loading
+    }
+}
+
+// Usage
+var customer = order.Customer; // "null" because related data is not loaded automatically
+```
+
+### Example
 ```cs - VD: User with Order is one-to-many
 public class User
 {
@@ -26,8 +97,8 @@ public class Order
 * `Related entities` are loaded from the database **`on-demand`** when `accessed for the first time`
 
 * optimize performance by reducing the amount of data retrieved from the database upfront
-* may lead to additional database queries if not used carefully
-```
+* may lead to additional database queries if not used carefully (lead to the N+1 problem)
+```cs
 var user = dbContext.Users.FirstOrDefault(u => u.Id == 1);
 var orders = user.Orders; //The orders are loaded from the database at this point
 ```
@@ -37,7 +108,7 @@ var orders = user.Orders; //The orders are loaded from the database at this poin
 * By specifying the `navigation properties` to be included using the **`Include`** method or by using the Include extension method
 
 * minimize the number of database round-trips (useful when we know we'll need the related data)
-```
+```cs
 var user = dbContext.Users.Include(u => u.Orders).FirstOrDefault(u => u.Id == 1);
 var orders = user.Orders;  // The orders are already loaded along with the user in a single query
 ```
@@ -48,14 +119,14 @@ var orders = user.Orders;  // The orders are already loaded along with the user 
 
 * useful for deferring the loading of certain related data until it is explicitly requested
 * _explicit ở đây tức là khi nào load thì hãy nói rõ bằng việc s/d method Load()_
-```
+```cs
 var user = dbContext.Users.FirstOrDefault(u => u.Id == 1);
 dbContext.Entry(user).Collection(u => u.Orders).Load();  // Explicitly load the orders for the user
 var orders = user.Orders;  // The orders are now loaded for the user
 ```
 
 ### Problem (using Lazy loading)
-```
+```cs
 var users = dbContext.Users.ToList(); // Lazy loading
 foreach (var user in users)
 {
@@ -65,13 +136,13 @@ foreach (var user in users)
 ```
 
 * fix with `Eager Loading`
-```
+```cs
 var users = dbContext.Users.Include(u => u.Orders).ToList();
-...
+// ...
 ```
 
 * fix with `Explicit loading` 
-```
+```cs
 var users = dbContext.Users.ToList();
 foreach (var user in users)
 {
@@ -82,13 +153,13 @@ foreach (var user in users)
 }
 ```
 
-## 17. Cách tối ưu khi dùng SQL
 
+## 17. Cách tối ưu khi dùng SQL
 
 # Enumerations in C# with IEnumerable & IEnumerator
 * modern programming languages makes it very easy to iterate collections
 * `iterations` are within two interface: **`IEnumerable and IEnumerator`**
-```
+```cs
 public static void Main()
 {
     var simpleList = new List<String>(){ "Hello", "to", "Medium" };
@@ -97,10 +168,10 @@ public static void Main()
         Console.WriteLine(item);
     }
 }
-=> Output: 
-Hello
-to
-Medium
+// => Output: 
+// Hello
+// to
+// Medium
 ```
 
 ## IEnumerable
@@ -125,7 +196,7 @@ Medium
 * the code also contains some sanity checks to verify an item at the requested index is present
 
 * The `foreach` section is turned into:
-```
+```cs
 List<string>.Enumerator enumerator = simpleList.GetEnumerator(); // deliver underlying IEnumerator
 try
 {
@@ -156,7 +227,7 @@ finally
 * Up to the point in time this execution is triggered, no enumeration of a query is done at all, and **`the query is really only that a query`**
 
 ## The Query
-```
+```cs
 var fruitList = new List<string>(){ "Banana", "Apple", "Cherry", "Apricot"};
 
 var fruitsWithA = fruitList.Where(fruit => {
@@ -203,7 +274,7 @@ IEnumerable<int> query = numbers.Where(condition).Select(condition);
 * For a LINQ query, materialization usually comes with `.ToList(), .ToArray()` (method starts with a “.To” already signals that it will materialize the query)
 
 * we are using a simple **`foreach`** loop -> it'll compile to:
-```
+```cs
 IEnumerator<string> enumerator = enumerable.GetEnumerator();
 try
 {

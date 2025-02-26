@@ -245,9 +245,8 @@ int i = (int)Obj;    // Unboxing
 
 ## "using" statement
 ### Purpose
-* used for `resource management` 
-* particularly with objects that implement the **`IDisposable`** interface 
 * ensures that the `resources allocated to an object` are properly `released and disposed` of when they are no longer needed, even if an exception is thrown during the execution of the code
+* particularly with objects that implement the **`IDisposable`** interface 
 
 ### Mechanism
 * It allows you to create a **`block of code`** where the object is instantiated and used
