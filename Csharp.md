@@ -38,7 +38,7 @@ int value = myNullableInt ?? 1;   // value will be "1" since myNullableInt is nu
 static void Main()
 {
     dynamic value = "Hello, World!"; // Compiler does not check what type 'value' is
-    Console.WriteLine(value.Length); // Works fine because at runtime, 'value' is a string
+    Console.WriteLine(value.Length); // Works fine because at runtime, 'value' is a string so it will have ".Length" property
 
     value = 100; // Now 'value' holds an int
     Console.WriteLine(value + 50); // Works fine because at runtime, 'value' is an int
