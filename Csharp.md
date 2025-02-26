@@ -30,9 +30,29 @@ int value = myNullableInt ?? 1;   // value will be "1" since myNullableInt is nu
 * `Static Nullable class` is a helper class to compare nullable types
 
 ## 8. object vs dynamic ?
-* -> **object** (System.Object ) is the **`base type for all other types in C#`**, so it can **`store any value and any other type can be implicitly converted to it`**
-* -> **dynamic** - is a new static type that is **`not known until runtime`**; so it is assumed to **`support any operation at compile-time`** and **`dynamic errors are only caught at runtime`**
+* -> **object** (System.Object ) - is a statically typed that is **`base type for all other types in C#`**, so it can **`store any value and any other type can be implicitly converted to it`**
+* -> **dynamic** - is a dynamically typed that is **`not known until runtime`**; so it is assumed to **`support any operation at compile-time`** and **`dynamic errors are only caught at runtime`**
 * => đối với tôi sự khác biết nằm ở chỗ tôi sẽ sử dụng chúng; tôi không sử dụng kiểu object nhiều nhưng thường sử dụng dynamic khi tôi muốn truy cập vào properties và methods của 1 biến mà tôi đã biết rõ cấu trúc
+
+```cs
+static void Main()
+{
+    dynamic value = "Hello, World!"; // Compiler does not check what type 'value' is
+    Console.WriteLine(value.Length); // Works fine because at runtime, 'value' is a string
+
+    value = 100; // Now 'value' holds an int
+    Console.WriteLine(value + 50); // Works fine because at runtime, 'value' is an int
+
+    value = DateTime.Now; // Now 'value' holds a DateTime object
+    Console.WriteLine(value.Year); // Works fine because at runtime, 'value' is a DateTime
+
+    value = new { Name = "John" }; // Anonymous type
+    Console.WriteLine(value.Name); // Works fine at runtime
+
+    dynamic obj = 100;
+    Console.WriteLine(obj.Length); // ❌ Runtime error! 'int' does not have 'Length'
+}
+```
 
 ## 17. Data types in C#?
 * -> **`Value Types`** (Stored in Stack) - numeric type, boolean, character, Structs & Enums
