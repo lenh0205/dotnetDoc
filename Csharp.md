@@ -29,6 +29,11 @@ int value = myNullableInt ?? 1;   // value will be "1" since myNullableInt is nu
 ```
 * `Static Nullable class` is a helper class to compare nullable types
 
+## 8. object vs dynamic ?
+* -> **object** (System.Object ) is the **`base type for all other types in C#`**, so it can **`store any value and any other type can be implicitly converted to it`**
+* -> **dynamic** - is a new static type that is **`not known until runtime`**; so it is assumed to **`support any operation at compile-time`** and **`dynamic errors are only caught at runtime`**
+* => đối với tôi sự khác biết nằm ở chỗ tôi sẽ sử dụng chúng; tôi không sử dụng kiểu object nhiều nhưng thường sử dụng dynamic khi tôi muốn truy cập vào properties và methods của 1 biến mà tôi đã biết rõ cấu trúc
+
 ## 17. Data types in C#?
 * -> **`Value Types`** (Stored in Stack) - numeric type, boolean, character, Structs & Enums
 * -> **`Reference Types`** (Stored in Heap) - class, string, Arrays, delegates, interfaces, object
