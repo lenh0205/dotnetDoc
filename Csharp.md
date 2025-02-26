@@ -116,62 +116,9 @@ int i = (int)Obj;    // Unboxing
 * -> **`automatically called by the Garbage Collector (GC)`** when an object is no longer in use to  **`clean up unmanaged resources (_e.g., file handles, database connections, sockets, native API calls, COM objects_) before an object is garbage collected`**
 * => we do not need to worry about the **Finalize** method unless we are working with **`unmanaged resources`** 
 * => we don't need "Finalize" for normal object cleanup; instead if **our class manages unmanaged resources**, it is recommended to implement **`IDisposable`** and use the **`Dispose`** method 
-* -> and **`GC.SuppressFinalize(this)`** in **Dispose** to prevent unnecessary finalization
+* -> and **`GC.SuppressFinalize(this)`** in **Dispose** to prevent unnecessary finalization (optimize GC performance)
 * -> (optinally) only implement "Finalize" as a last resort **if Dispose() might not be called**
 
-* https://www.scholarhat.com/tutorial/net/difference-between-finalize-and-dispose-method
-* https://codetosolutions.com/blog/36/difference-between-finally,-finalize-and-dispose-in-c%23
-* https://learn.microsoft.com/en-us/dotnet/api/system.object.finalize?view=net-9.0
-* https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/finalizers
-* https://stackoverflow.com/questions/46691339/why-net-object-has-method-finalize
-* https://www.bytehide.com/blog/finalize-objects-csharp
-* https://dev.to/bytehide/dispose-or-finalize-in-c-discover-which-to-use-150h
-* https://pvs-studio.com/en/blog/posts/csharp/0437/
-
-```cs
-public class ResourceHolder : IDisposable
-{
-    private IntPtr _unmanagedResource; // Example unmanaged resource
-    private bool _disposed = false;
-
-    public ResourceHolder()
-    {
-        // Allocate unmanaged resource
-        _unmanagedResource = /* Some native API call */;
-    }
-
-    ~ResourceHolder() // Finalizer (destructor of "ResourceHolder" class) (only if needed)
-    {
-        Dispose(false);
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this); // Prevent finalizer call
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                // Dispose managed resources here (if any)
-            }
-
-            // Free unmanaged resource
-            if (_unmanagedResource != IntPtr.Zero)
-            {
-                // Release unmanaged resource
-                _unmanagedResource = IntPtr.Zero;
-            }
-
-            _disposed = true;
-        }
-    }
-}
-```
 
 ## 3. 'string' is reference type or value type?
 * -> string is a **`reference type`**, but it **`behaves like a value`** type 
