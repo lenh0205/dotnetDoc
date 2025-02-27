@@ -154,7 +154,97 @@ foreach (var user in users)
 ```
 
 
-## 17. Cách tối ưu khi dùng SQL
+## 17. viết câu LINQ 1 cách tối ưu ?
+
+## 23. AsNoTracking?
+https://honeycombsoft.com/improve-performance-in-your-dot-net-app/
+https://learn.microsoft.com/en-us/ef/core/querying/tracking
+https://www.krisvandermast.com/post/2018/02/03/Use-AsNoTracking-to-speed-up-Entity-Framework-performance.html
+https://www.devtrends.co.uk/blog/avoid-asnotracking-and-include-when-querying-using-entity-framework-in-asp.net
+https://stackoverflow.com/questions/12211680/what-difference-does-asnotracking-make
+https://nicolas-rfontes.medium.com/why-we-need-to-use-asnotracking-in-net-c-entityframework-cc2bbdb83a58
+https://goatreview.com/improve-reading-query-with-asnotracking/
+https://medium.com/@satyaprakashsahoo.blog/what-is-the-use-of-asnotracking-in-entity-framework-cb6c453d1f1#:~:text=AsNoTracking%20is%20a%20method%20in,row%20in%20the%20result%20set.
+
+* -> improve performance
+*  By default, all queries that return model objects from DB are trackable (unless you changed default behaviour with AutoDetectChangesEnabled property)
+*  When the data context retrieves data from the database, the Entity Framework places the retrieved objects in the cache and monitors changes that occur to those objects until it uses the SaveChanges() or SaveChangesAsync() method, which commits any changes to the database
+*  But we don’t always need to track changes. For example, we just need to display data for viewing.
+* => When AsNoTracking() is applied, the data returned from the request is not cached, that is, the request becomes untracked
+* => This means that the Entity Framework does not perform any additional processing and does not allocate additional space for storing objects retаrieved from the database.
+* => therefore, such queries are faster
+
+```cs
+// compare performance (speed of execution and memory usage) between without "AsNoTracking" and with "AsNoTracking"
+[MemoryDiagnoser]
+public class MemoryBenchmarkerDemo
+{
+    [Benchmark]
+    public List GetUsers()
+    {
+        using (AppDbContext db = new AppDbContext())
+        {
+            return db.Users.ToList();
+        }
+    }
+
+    [Benchmark]
+    public List GetUsersWithNoTracking()
+    {
+        using (AppDbContext db = new AppDbContext())
+        {
+            return db.Users.AsNoTracking().ToList();
+        }
+    }
+}
+
+Method    Mean    Error     StdDev    Gen 0    Gen 1    Gen 2    Allocated
+GetUsers    17.000 ms    
+GetUsersWithNoTracking
+```
+
+```cs
+// can not update any item or collection that we received with AsNoTracking,
+// because Entity Framework does not store these objects in the cache
+
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+
+namespace AsNoTrackinsExample
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            using (AppDbContext db = new AppDbContext())
+            {
+                var user = db.Users.AsNoTracking().FirstOrDefault();
+                user.Age = 22;
+                db.SaveChanges(); // Age will not be updated 
+            }
+        }
+    }
+}
+```
+
+```cs
+// ChangeTracker - manage the tracking of an object and provide tracking information
+
+// -> disable tracking in general for the context object
+using (AppDbContext db = new AppDbContext())
+{
+    db.ChangeTracker.AutoDetectChangesEnabled = false;
+    // ...
+}
+
+// -> find out how many objects are currently being tracked
+using (AppDbContext db = new AppDbContext())
+{
+    var users = db.Users.ToList();
+
+    int count = db.ChangeTracker.Entries().Count();
+}
+```
 
 # Enumerations in C# with IEnumerable & IEnumerator
 * modern programming languages makes it very easy to iterate collections
