@@ -42,6 +42,7 @@
 
 # how to catch up on new/big project? (how to transfer? how to get knowledge? what if have no good documentation...)
 
+# the main technologies your project uses? What are the common features your project includes?
 	
 # how to handle production issue?
 * -> ta nên get a stable copy of production before your deploy và chạy nó lên (_có 1 **CI/CD pipeline** sẽ rất là tiện_) đảm bảo how quickly we could get a working version deployed and available for users again
