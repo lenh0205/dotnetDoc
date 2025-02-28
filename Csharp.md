@@ -74,8 +74,289 @@ Enum, Struct, int, float, boolean,...
 Class, Object, Array, Indexer, Interface
 ```
 
-## 3. Different between class, struct?
-* -> the main difference between 'class' and 'struct' is that **`'struct' is value type`** and **`'class' is reference type`** 
+## 4. object initializer
+* -> allows to **initialize the value to the fields or properties** of a class at **the time of creating an object** **`without calling a constructor`**
+```cs
+class Geeks {
+    public string author_name { get; set; }
+    public int author_id { get; set; }
+    public int total_article { get; set; }
+}
+ 
+class GFG {
+    static public void Main()
+    {
+        // -> "Geeks" class doesn't contain any constructor
+        // -> we simply create the object
+        // -> then simply initialize fields at the same time using "curly braces" (an object initializer)
+        Geeks obj = new Geeks() {
+            author_name = "Ankita Saini",
+            author_id = 102,
+            total_article = 178};
+         
+        Console.WriteLine("Author Name: {0}", obj.author_name); // Author Name: Ankita Saini
+        Console.WriteLine("Author Id: {0}", obj.author_id); // Author Id: 102
+        Console.WriteLine("Total no of articles: {0}", obj.total_article); // Total no of articles: 178
+    }
+}
+```
+
+* -> the compiler will compiles the above program it assign the values to the object like this:
+```cs
+Geeks __geeks = new Geeks();
+__geeks.author_name = "Ankita Saini";
+__geeks.author_id = 102;
+__geeks. total_article = 178;
+
+Geeks obj =  __geeks; 
+```
+
+## 12. static ?
+* -> define a member that **`belongs to the class itself rather than an instance of the class`**
+* -> a "static" field can be **`changed at runtime`** and can hold any type of data
+* -> a static method can only access other static members
+
+```cs
+class Example
+{
+    public static int StaticValue = 10; // Belongs to the class
+
+    public static void PrintValue()
+    {
+        Console.WriteLine($"Static Value: {StaticValue}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Example.PrintValue(); // 10
+        Example.StaticValue = 20; // Can be modified
+        Example.PrintValue(); // 20
+    }
+}
+```
+
+## 11. const - readonly - init
+* _all prevent modification_
+
+### const
+* used to declare **compile-time constant** for a **`field`** - fields value **`must be assigned at declaration`** and **`cannot be changed later`**
+* const fields are **`implicitly static`**, meaning they can be accessed using the type name without creating an instance of the class
+* const fields can only hold **`simple value types`** (_primative value and strings_) 
+```cs
+class Example
+{
+    public const double Pi = 3.14159; // Must be initialized at declaration
+}
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine($"Value of Pi: {Example.Pi}");
+        // Example.Pi = 3.14; // ERROR: Cannot modify a const field
+    }
+}s
+```
+
+### readonly:
+* a readonly field represents a **runtime constant** for a **`field`** - field value is **evaluated and assigned at runtime**
+* can only assigned at the time of **`declaration`** or **`within the constructor`** of class and **`cannot be modified after`** the construction 
+* can hold **`any type of value`** (_including complex objects_)
+```cs
+private readonly double _pi = 5;
+private readonly double _radius;
+
+public Circle(double radius)
+{
+   _pi = 3.14159;
+   _radius = radius;
+}
+```
+
+### init
+* -> use for **`immutable properties`** - can only be assigned value at **`declaration`**, in **`constructor`** or **`object initializer`** and **`cannot be modified after object creation`**
+* -> can hold **any type of value**
+
+## 3. Different between class, struct, record?
+
+## struct
+* -> is **`value type`** (_**immutable** and **value-based equality**_)
+* -> suitable for **`small, lightweight, performance-critical data structures`** (_but if **struct** become large, this might be a problem when copying entire object value, instead of just reference like class_)
+* -> limited in OOP - **`no Inheritance (Polymorphism)`**
+* _built-in C# struct: int, double, bool, DateTime, TimeSpan, Guid_
+
+## class
+* -> is **`reference type`**
+* -> supports **`full OOP features`** like polymorphism, abstract classes, and virtual methods
+* -> **`less performance`** - every time a new object is created, it is allocated on the heap, **increasing Garbage Collector (GC) pressure**; also modifying position frequently leads to **memory fragmentation**
+
+## record
+* -> a **`reference type`**; is designed for **`immutable`** data models and **`value-based equality`**
+
+```cs
+// -----> provides a compact syntax using positional parameters:
+public record Employee(string Name, string Position);
+```
+
+```cs
+// -----> value-based equality
+public record Person(string Name, int Age);
+
+var p1 = new Person("Alice", 25);
+var p2 = new Person("Alice", 25);
+
+Console.WriteLine(p1 == p2); // True (value-based equality)
+```
+
+```cs
+// -----> immutability
+// makes it easier to work with immutable data because it provides "with" expression for creating new modified instances
+var p3 = p1 with { Age = 26 };  // Creates a new object with modified Age
+```
+
+### Positional Record
+* -> normally, we can define a "record" throught **positional properties** (_**`define properties inside the constructor`** and are **`immutable (init-only) by default`** unless explicitly modified)
+```cs
+// "Name" and "Age" are 2 positional properties: 
+public record Person(string Name, int Age);
+```
+
+```cs
+// code above the same as:
+public record Person
+{
+    public string Name { get; init; }  // `init` means immutable after initialization
+    public int Age { get; init; }
+
+    public Person(string name, int age)
+    {
+        Name = name;
+        Age = age;
+    }
+}
+```
+
+### Members
+* -> we **`can also define additional properties`** inside a record beside the **positional properties**
+```cs
+public record Product(string Name, decimal Price)
+{
+    public decimal DiscountedPrice => Price * 0.9m; // computed extra property
+    public string Color { get; set; } = "White"; // mutable extra property (defined with "set;")
+}
+```
+
+* -> define a custom **constructor** in a record:
+```cs
+// -> multiple constructor
+public record Employee(string Name, int Age, string Address)
+{
+    public Employee(string name, int age) : this (name, age, "319") { }
+    public Employee(string name) : this(name, 21) { }
+}
+
+var emp1 = new Employee("Charlie", 30);
+var emp2 = new Employee("David");  // Uses the second constructor
+
+Console.WriteLine(emp1); // Employee { Name = Charlie, Age = 30, Address = 319 }
+Console.WriteLine(emp2); // Employee { Name = David, Age = 21, Address = 319 }
+
+// -> if not specific constructor, we have to initiate with "object initializer" or specific "a parameterless Constructor"
+// -> because positional records don't automatically provide a parameterless constructor
+
+public record Car
+{
+    public string Model { get; set; }  // Mutable
+    public int Year { get; init; }  // Immutable after initialization
+}
+var car = new Car { Model = "Toyota", Year = 2022 };
+car.Model = "Honda"; // Allowed
+car.Year = 2023; // Not allowed (init-only)
+
+public record Car
+{
+    public string Model { get; init; }
+    public int Year { get; init; }
+
+    // Parameterless constructor
+    public Car()
+    {
+        Model = "Unknown";
+        Year = 2000;
+    }
+}
+var defaultCar = new Car();
+Console.WriteLine(defaultCar);  // Car { Model = Unknown, Year = 2000 }
+```
+
+* -> define **methods** inside a record
+```cs
+public record Person(string Name, int Age)
+{
+    public string GetDetails()
+    {
+        return $"{Name} is {Age} years old.";
+    }
+}
+var person = new Person("Alice", 25);
+Console.WriteLine(person.GetDetails()); // Alice is 25 years old.
+```
+
+### 
+* -> **Inheritance** 
+```cs
+public record Person(string Name, int Age);
+
+public record Employee(string Name, int Age, string Position) : Person(Name, Age)
+{
+    public string GetJobInfo() => $"{Name} works as {Position}.";
+}
+```
+
+* -> **Abstraction** and **Polymorphism** 
+```cs
+public abstract record Animal
+{
+    public abstract string Speak();
+}
+public record Dog : Animal
+{
+    public override string Speak() => "Woof!";
+}
+public record Cat : Animal
+{
+    public override string Speak() => "Meow!";
+}
+```
+
+* -> **Encapsulation**
+```cs
+public record BankAccount
+{
+    public string AccountHolder { get; init; }
+    
+    private decimal _balance;
+    
+    public decimal Balance
+    {
+        get => _balance;
+        private set
+        {
+            if (value < 0)
+                throw new ArgumentException("Balance cannot be negative.");
+            _balance = value;
+        }
+    }
+
+    public BankAccount(string accountHolder, decimal balance)
+    {
+        AccountHolder = accountHolder;
+        Balance = balance; // Uses setter with validation
+    }
+}
+```
 
 ## 16. Anonymous type in C#? 
 * -> a temporary, compiler-generated type used when we need **a simple object without defining a class**
