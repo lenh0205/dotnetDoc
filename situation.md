@@ -1,5 +1,5 @@
 # Introduce
-* I am a .NET developer with three years of experience in web development. 
+* I am a .NET developer with four years of experience in web development. 
 * While my primary focus is on backend technologies such as ASP.NET Core Web API, SQL Server, and Entity Framework, I also have a foundational understanding of frontend technologies like React and ASP.NET Core MVC.
 
 * Throughout my career, I have worked in Agile development environments and have occasionally taken on full-stack development responsibilities to meet project requirements. I have contributed to building management systems for government projects, including a documentation management system.
@@ -28,7 +28,7 @@
 * I had the opportunity to explore various technologies and design patterns, such as: 
 * _UnitOfWork pattern for better data management, FluentValidation to simplify validation logic, Automapper for seamless object mapping, React for the frontend, where we built a custom application, And extensive unit testing to ensure reliability_
 
-* The project was developed by a team of five, following the Agile process, where we used Jira for tracking tasks and Confluence for documentation. 
+* The project was developed by a team of eight, following the Agile process, where we used Jira for tracking tasks and Confluence for documentation. 
 * In this project, I contributed as a full-stack developer, handling both backend and frontend development.
 
 * Overall, this project was a great learning experience and helped me sharpen my technical skills while working in a collaborative environment.
