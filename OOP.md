@@ -169,16 +169,6 @@ class AnotherDerivedClass : DerivedClass
 * `Abstract classes` are commonly used when you want to provide a `common base implementation` and define common behavior among `related classes`.
 * `Interfaces` are useful when you want to define a contract that `multiple unrelated classes` can implement. They allow for polymorphism and are helpful when you want to `achieve loose coupling`
 
-## 10. What is the difference between public, static, and void
-### static
-* declare members (fields, methods, properties, events, etc.) that `belong to the type itself rather than to an instance of the type`
-
-* Static Fields, Static Properties, Static Methods, Static Events, Static Constructors are associated with the class itself rather than individual instances
-* tức là chúng có thể "accessed and modified"/ "call"/ "subscribed to or raised" / "initial the type itself" directly on the class without creating an instance
-
-* All instances of the class can access and modify the same value of the static field
-* A static constructor is `called only once`, before any instances of the class are created, and it is primarily used for `initializing static fields` or performing other `initialization tasks` related to the class
-
 ## 6. what is SOLID, which case to use it ?
 *  are five key design principles in object-oriented programming that help create maintainable, scalable, and testable software
 
@@ -392,70 +382,6 @@ public class Switch
     {
         _device.TurnOn();
     }
-}
-```
-
-
-## 11. const - readonly - static
-
-### static
-* -> define a member that **`belongs to the class itself rather than an instance of the class`**
-* -> a "static" field can be **`changed at runtime`** and can hold any type of data
-* -> a static method can only access other static members
-
-```cs
-class Example
-{
-    public static int StaticValue = 10; // Belongs to the class
-
-    public static void PrintValue()
-    {
-        Console.WriteLine($"Static Value: {StaticValue}");
-    }
-}
-
-class Program
-{
-    static void Main()
-    {
-        Example.PrintValue(); // 10
-        Example.StaticValue = 20; // Can be modified
-        Example.PrintValue(); // 20
-    }
-}
-```
-
-### const
-* used to declare **`compile-time constants`** - const fields **must be assigned a value at the time of declaration** and **cannot be changed later**
-* const fields are **`implicitly static`**, meaning they can be accessed using the type name without creating an instance of the class
-* const fields can only hold `simple value types` (numeric types, boolean, characters, strings, etc.) 
-```cs
-class Example
-{
-    public const double Pi = 3.14159; // Must be initialized at declaration
-}
-class Program
-{
-    static void Main()
-    {
-        Console.WriteLine($"Value of Pi: {Example.Pi}");
-        // Example.Pi = 3.14; // ERROR: Cannot modify a const field
-    }
-}s
-```
-
-### readonly:
-* a readonly field represents a **`runtime constant`** - value is **evaluated and assigned at runtime**
-* value can be only assigned at the time of **`declaration`** or **`within the constructor`** of class and cannot be modified after the constructor finishes executing
-* readonly fields can hold `any type of value`, including complex objects.
-```cs
-private readonly double _pi;
-private readonly double _radius;
-
-public Circle(double radius)
-{
-   _pi = 3.14159;
-   _radius = radius;
 }
 ```
 
