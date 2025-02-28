@@ -7,7 +7,7 @@ gian nào tới thời gian nào chẳng hạn, team nhiêu người, mấy dev 
 # Khi phỏng vấn
 - interview gồm 3 phần: introduction, câu hỏi tình huống, câu hỏi technical
 
-# Các câu giao tiếp
+# Communication
 - tâm lý tốt: cơ hội pv với khách hàng
 - Hello tên A cho thân thiện (thay vì sir)
 - nhấn mạnh (nói chậm lại, đừng vội, rõ ràng) những chỗ cần thiết khi nói (experient, công nghệ mình sử dụng) để họ có thời gian catch up, connection giữa 2 người (xem họ như nào, tương tác)
@@ -15,9 +15,13 @@ gian nào tới thời gian nào chẳng hạn, team nhiêu người, mấy dev 
 
 - sau khi trả lời xong: that's all, that what I think 
 - với những câu hỏi về do you know (câu hỏi mở) ? sẽ nói 1 cách overview
+- câu nào không biết thì đưa ra ví dụ ? câu nào biết rồi thì cũng từ từ trả lời, sắp xếp lại rồi hẳn nói? suy nghĩ thật kỹ trược khi trả lời (1 - 2 s or give me some second), cần sắp xếp lại cho hợp lý?
+- rất nhiều tình huống ngoài gì đã chuẩn bị thì cần trả lời như nào ?
+- hãy câu thêm thời gian (bằng những ví dụ chẳng hạn)
+- khi gặp câu hỏi về compare ta cần quan tầm đk nào ? sao dùng cái này mà không dùng cái kia ? VD: scope the answer with condition: is Constructor Injection is the most efficient;
 - câu hỏi cuối buổi: (hỏi về overview, đừng chi tiết quá): How big is your team size? How far along is the development process? What are main technology that you are using? team-size ?
 
-# Tư duy
+# Keep in Mind
 - chuẩn bị bao nhiêu cũng không đủ, quan trọng là cách mình xử lý ? không biết thì đừng nói không biết tìm cách khác để trả lời ví dụ tôi nghĩ nó sẽ thể này
 - logic của mình (hiểu câu hỏi, trình bày câu trả lời) quan trọng hơn sự chính xác - tạo connection, trò chuyện thật nhiều để cho rõ nhau
 - solving problem skill: nếu có problem thì raise lên nhưng đừng mang mỗi problem mà hãy có solution 
@@ -40,12 +44,6 @@ gian nào tới thời gian nào chẳng hạn, team nhiêu người, mấy dev 
 - self-manage: tự giác, chủ động tránh sự phụ thuộc
 - Ví dụ về project: main business, main features, ...
 - reponsibible như thế thì ngoài technical thì việc làm việc với QA, BA, ... như thế nào ? (support dev khác, review code,...)
-
-# Mẹo
-- câu nào không biết thì đưa ra ví dụ ? câu nào biết rồi thì cũng từ từ trả lời, sắp xếp lại rồi hẳn nói? suy nghĩ thật kỹ trược khi trả lời (1 - 2 s or give me some second), cần sắp xếp lại cho hợp lý?
-- rất nhiều tình huống ngoài gì đã chuẩn bị thì cần trả lời như nào ?
-- hãy câu thêm thời gian (bằng những ví dụ chẳng hạn)
-- khi gặp câu hỏi về compare ta cần quan tầm đk nào ? sao dùng cái này mà không dùng cái kia ? VD: scope the answer with condition: is Constructor Injection is the most efficient;
 
 # Coding question
 - chuẩn bị cả bài tập coding
