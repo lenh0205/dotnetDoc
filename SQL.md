@@ -69,15 +69,16 @@ CREATE INDEX IX_Employee_Active ON Employee (EmployeeID) WHERE IsActive = 1;
 ```
 
 ## 6. ACID
+* _ACID is a set of properties that **define how transactions should behave to prevent data corruption, inconsistencies, and concurrency issues**_
 * -> **`Atomicity`** - Everything happens fully or not at all.
 * -> **`Consistency`** - The database stays correct before and after the transaction.
 * -> **`Isolation`** - Transactions don’t interfere with each other.
 * -> **`Durability`** - Once saved, data is permanent, even if the system crashes
 
 ## 5. Transaction
-* -> is a group of operations that must be executed together; 
-* -> if something goes wrong (like a system crash), **`both steps must be undone (rolled back) to keep the database correct`**
-* -> a transaction follows **`ACID rules`**
+* -> a **logical unit of work** in a database that **consists of one or more operations**
+* -> ensures that either **`all operations succeed or none are applied`**, maintaining **data integrity**
+* -> transaction reply on **`ACID`** to ensure that data remains **accurate, reliable, and consistent**
 
 ## 3. Transaction Isolation Level
 * -> since multiple users run transactions at the same time, SQL provides **isolation levels** to **`control how transactions affect each other`**
@@ -183,26 +184,134 @@ SELECT * FROM Person.Contact WHERE ContactID < 20
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED; -- turn it off
 ```
 
+## 19. Subquery:
+* * -> is **`a query nested inside another SQL query`**
+* => return a single value, a list of values, or a table, depending on the context
+
+* It allows you to perform complex queries by using the results of the inner query in the outer query
+```sql
+-- Retrieving orders for customers from the USA
+SELECT OrderID, OrderDate, TotalAmount
+FROM Orders
+WHERE CustomerID IN (
+    SELECT CustomerID
+    FROM Customers
+    WHERE Country = 'USA'
+);
+```
+
+## 22. Triggers:
+* -> is a **database object** that **`automatically executes a set of SQL statements in response to specific events`** (e.g., INSERT, UPDATE, DELETE) on a table
+* => enforce business rules, maintain data integrity, or automate tasks
+
+```sql
+-- Creating a trigger to update last modified date on customer update
+CREATE TRIGGER tr_UpdateLastModified
+ON Customers
+AFTER UPDATE
+AS
+BEGIN
+    UPDATE Customers
+    SET LastModified = GETDATE()
+    FROM Customers
+    JOIN inserted ON Customers.CustomerID = inserted.CustomerID;
+END;
+```
+
+## 34. Recursive CTE
+* -> is **`a CTE`** that **`calls itself repeatedly`** until **a termination condition is met**
+* => useful for problems like **`Hierarchical data `**(_e.g., employees & managers, category trees_), **`Graph traversal`** (_e.g., finding shortest paths_), **`Generating sequences`** (_e.g., numbers, dates_)
+
+```sql
+-- SQL Server limits recursion to 100 levels by default
+-- to override it:
+OPTION (MAXRECURSION 200);
+```
+
+### Structure
+* -> **`Anchor Query`** (Base case) - runs once
+* -> **`Recursive Query`** (Recursive call) - calls itself until a stopping condition is met
+```sql
+WITH RecursiveCTE AS (
+    -- Anchor Query (Base Case)
+    SELECT Column1, Column2
+    FROM Table
+    WHERE SomeCondition
+
+    UNION ALL
+
+    -- Recursive Query (Recursive Call)
+    SELECT Column1, Column2
+    FROM Table
+    JOIN RecursiveCTE ON SomeCondition
+)
+SELECT * FROM RecursiveCTE;
+```
+
+### Example
+```sql
+-- define table:
+CREATE TABLE Employees (
+    EmployeeID INT NOT NULL,
+    Name VARCHAR(MAX) NOT NULL,
+    ProductID INT NULL
+);
+INSERT INTO Employees (Name, ProductID) VALUES ('CEO', NULL);
+INSERT INTO Employees (Name, ProductID) VALUES ('Manager A', 1);
+
+-- Query to get all employees reporting to the CEO:
+WITH EmployeeHierarchy AS (
+    -- Base Case: Start with the CEO (Top of the hierarchy)
+    SELECT EmployeeID, Name, ManagerID, 1 AS Level
+    FROM Employees
+    WHERE ManagerID IS NULL
+    
+    UNION ALL
+    
+    -- Recursive Case: Find employees who report to the previous level
+    SELECT e.EmployeeID, e.Name, e.ManagerID, eh.Level + 1
+    FROM Employees e
+    INNER JOIN EmployeeHierarchy eh ON e.ManagerID = eh.EmployeeID
+)
+SELECT * FROM EmployeeHierarchy;
+```
+
+```sql
+-- Generating a Sequence of Numbers
+WITH Numbers AS (
+    SELECT 1 AS Num  -- Base Case (Start at 1)
+    UNION ALL
+    SELECT Num + 1 FROM Numbers WHERE Num < 10  -- Recursive Case
+)
+SELECT * FROM Numbers;
+
+-- Output: 1    2   3   ...     10
+```
+
+
 ## 15. SQL Reusability 
-* -> Stored Procedure, Function (TVF, Scalar), View, CTE, Temp Table, Derived Table
+* -> Stored Procedure, Function (TVF, Scalar), View, CTE, Temp Table
 
-## View:
-* A view is a `virtual table` derived from a SQL query
-* It allows you to `encapsulate complex queries` or commonly used query logic into a named object
-* Views do not store data themselves but dynamically generate results based on the underlying query definition.
-```
--- Creating a view to retrieve customer information
-CREATE VIEW vw_Customers AS
-SELECT CustomerID, FirstName, LastName, Email
-FROM Customers
-WHERE Country = 'USA';
+### View:
+* is a **`virtual table`** (means **treated/behaves like a table** but it **doesn't physically store the data**, just a stored query produces a result set dynamically when queried) based on **`a SELECT query`**
+* => allows to **`encapsulate complex or common queries and abtract it to simplify complex joins and aggregations`**
+
+```sql
+-- create a view
+CREATE VIEW vw_ActiveUsers AS
+SELECT Id, Name, Email FROM Users WHERE IsActive = 1;
+-- usage:
+SELECT * FROM vw_ActiveUsers;
+
+-- equivalent to:
+SELECT Id, Name, Email FROM Users WHERE IsActive = 1;
 ```
 
-## Procedure:
-* A procedure is `a named set of SQL statements` stored in the database that can be executed repeatedly. 
-* Procedures help group SQL statements into a single logical unit, providing reusability and modularity.
-* They are invoked / called by other programs or database users.
-```
+### Procedure:
+* -> is a **`precompiled collection of SQL statements`** stored in a database 
+* => **`encapsulate complex logic, ensure code reusability and improve performance`**
+
+```sql
 -- Creating a procedure to insert a new customer
 CREATE PROCEDURE sp_InsertCustomer
     @FirstName VARCHAR(50),
@@ -215,6 +324,77 @@ BEGIN
 END;
 ```
 
+### CTE - Common Table Expressions
+* -> define **a reusable temporary result set** **`within a query`**
+* => provide a simple, readable way to **organize a query**
+
+```sql
+WITH ActiveUsers AS (
+    SELECT Id, Name, Email FROM Users WHERE IsActive = 1
+)
+SELECT * FROM ActiveUsers;
+```
+
+### Temporary Tables
+* ->  to **`reuse data within a session`** (_can be used across multiple queries until session end or explicitly dropped_)
+* => provide reusability across **multiple queries**
+```sql
+CREATE TABLE #TempUsers (Id INT, Name NVARCHAR(100));
+INSERT INTO #TempUsers SELECT Id, Name FROM Users WHERE IsActive = 1;
+SELECT * FROM #TempUsers;
+DROP TABLE #TempUsers;
+```
+
+### Table Variables
+* -> similar to **temporary tables**, but scoped to **`a single batch`**
+
+```sql
+DECLARE @TempUsers TABLE (Id INT, Name NVARCHAR(100));
+INSERT INTO @TempUsers SELECT Id, Name FROM Users WHERE IsActive = 1;
+SELECT * FROM @TempUsers;
+```
+
+
+## 'View' vs 'Function'
+
+* **View**
+* -> can't take **parameters**
+* -> optimized by using **`Indexed Views`** - **`physically stores the result set`** once the required **`clustered index`** is created and **`automatically updated when base tables change`**
+* => faster **performance**, especially for **`complex, frequently used aggregations, joins, query`** 
+* -> can use **non-deterministic functions** (_like GETDATE()_)
+
+```sql
+-- indexed view for a complex aggregation that is used frequently
+-- this Ex show querying "vw_TotalSales" is much faster than recalculating the SUM every time!
+CREATE VIEW vw_TotalSales WITH SCHEMABINDING AS
+SELECT CustomerID, SUM(TotalAmount) AS TotalSpent
+FROM Orders
+GROUP BY CustomerID;
+GO
+CREATE UNIQUE CLUSTERED INDEX idx_vw_TotalSales ON vw_TotalSales (CustomerID);
+```
+```sql
+-- define a regulalr view:
+CREATE VIEW vw_SalesSummary
+WITH SCHEMABINDING  -- Required for an indexed view
+AS
+SELECT 
+    ProductID, 
+    SUM(Quantity) AS TotalQuantity, 
+    COUNT_BIG(*) AS OrderCount
+FROM dbo.Sales
+GROUP BY ProductID;
+
+-- converts the view into an Indexed View (Materialized View) by creating a Clustered Index on the View
+CREATE UNIQUE CLUSTERED INDEX IX_SalesSummary 
+ON vw_SalesSummary(ProductID);
+```
+
+* **Function**
+* -> can take **parameters**
+* -> cannot have indexes, so they may perform worse on large datasets
+* -> cannot use **non-deterministic functions**
+
 ## 'Store procedures' vs 'Function'
 
 * **user-defined functions (UDFs)** 
@@ -223,46 +403,50 @@ END;
 * **Note**: we can still  declare and INSERT (UPDATE and DELETE is not allowed) data into a table variable inside a function
 
 ```sql - Ex:
--- define
-CREATE FUNCTION dbo.CalculateTotalPrice(@price DECIMAL(10,2), @taxRate DECIMAL(5,2))  
-RETURNS DECIMAL(10,2)  
-AS  
-BEGIN  
-    RETURN @price + (@price * @taxRate / 100);  
-END;
-
---usage
-SELECT dbo.CalculateTotalPrice(100, 10) AS TotalPrice;
-```
-```sql - Ex:
---define
-CREATE FUNCTION GetCostAverage() 
-RETURNS DECIMAL(5,2) DETERMINISTIC
-
-BEGIN
-    RETURN (SELECT AVG(Cost) FROM Orders);
-END 
-
---usage
-SELECT GetCostAverage();
-```
-```sql - Ex:
-CREATE FUNCTION dbo.GetSampleData()
-RETURNS @ResultTable TABLE (ID INT, Name NVARCHAR(100))
+-- Scalar UDF
+-- -> returns a single value used for calculations or transformations
+CREATE FUNCTION fn_GetDiscount(@price DECIMAL(10,2))
+RETURNS DECIMAL(10,2)
 AS
 BEGIN
-    INSERT INTO @ResultTable (ID, Name)
-    VALUES (1, 'Alice'), (2, 'Bob');
+    RETURN @price * 0.10; -- Returns 10% discount
+END;
 
+SELECT fn_GetDiscount(500) AS DiscountAmount; -- Output: 50
+```
+```sql - Ex:
+-- TVF - Table-Valued Function
+-- -> returns a table instead of a single value
+-- -> can be used like a table in SELECT statements
+
+-- inline TVF
+CREATE FUNCTION fn_GetActiveUsers()
+RETURNS TABLE
+AS
+RETURN 
+(
+    SELECT Id, Name, Email FROM Users WHERE IsActive = 1
+);
+SELECT * FROM fn_GetActiveUsers(); -- usage
+
+-- Multi-Statement TVF (uses a table variable inside the function)
+CREATE FUNCTION fn_GetOrdersByCustomer(@CustomerId INT)
+RETURNS @Orders TABLE (OrderID INT, OrderDate DATETIME)
+AS
+BEGIN
+    INSERT INTO @Orders
+    SELECT OrderID, OrderDate FROM Orders WHERE CustomerID = @CustomerId;
+    
     RETURN;
-END;    
+END;
+SELECT * FROM fn_GetOrdersByCustomer(1); -- usage
 ```
 
 * **store procedures**
 * -> can change database objects
 * -> can only be invoked using the CALL statement (_we can call a `function` inside stored procedure but not vise versa_)
-* -> do not have to return a value, but we can still return values using **`RETURN` or `OUTPUT` parameters**
-* _ngoài ra trong quá trình thực thi, stored procedure có thể s/d **Transaction**, **try/catch**; còn function thì không thể_
+* -> do not required to return a value, but we can still return values using **`RETURN` or `OUTPUT` parameters**
+* -> ngoài ra trong quá trình thực thi, stored procedure có thể s/d **`Transaction`**, **`Error handling (try/catch)`**; còn function thì không thể
 
 ```sql - Ex:
 --define
@@ -277,38 +461,6 @@ END;
 
 --usage
 EXEC dbo.AddCustomer 'John Doe', 'john.doe@example.com';
-```
-
-## Subquery:
-* a `nested query embedded within another query`
-* It allows you to perform complex queries by using the results of the inner query in the outer query
-```sql
--- Retrieving orders for customers from the USA
-SELECT OrderID, OrderDate, TotalAmount
-FROM Orders
-WHERE CustomerID IN (
-    SELECT CustomerID
-    FROM Customers
-    WHERE Country = 'USA'
-);
-```
-
-## Triggers:
-* Triggers are `database objects` associated with a table 
-* `automatically execute` in response to specified events, such as INSERT, UPDATE, or DELETE operations. 
-* They enforce data integrity, perform additional actions or validations, or maintain audit trails of database changes.
-```
--- Creating a trigger to update last modified date on customer update
-CREATE TRIGGER tr_UpdateLastModified
-ON Customers
-AFTER UPDATE
-AS
-BEGIN
-    UPDATE Customers
-    SET LastModified = GETDATE()
-    FROM Customers
-    JOIN inserted ON Customers.CustomerID = inserted.CustomerID;
-END;
 ```
 
 ## 19. SQL Server Collation
