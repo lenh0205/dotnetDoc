@@ -475,6 +475,7 @@ public interface IList : System.Collections.ICollection
 #### Single-dimensional arrays
 * an array is a **`fixed-size`** collection 
 * have specific type
+* can be multidimensional – Supports int[,] multiArray or jagged arrays int[][]
 
 #### Multidimensional arrays
 
