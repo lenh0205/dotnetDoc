@@ -504,7 +504,7 @@ students.Remove("Bob"); // Remove a student
 Console.WriteLine(students[0]); // Access first student
 ```
 
-### Dictionary -The Dictionary<TKey, TValue> 
+### The Dictionary<TKey, TValue> 
 * a collection of **`KeyValuePair<TKey, TValue>`**
 * => fast lookup (O(1) time complexity) of values based on unique keys
 
@@ -517,7 +517,7 @@ Dictionary<int, string> employees = new Dictionary<int, string>
 Console.WriteLine(employees[101]); // Output: Alice
 ```
 
-### HashSet - The HashSet<T> 
+### HashSet<T> 
 * an **`unordered`** collection of **`unique elements`**
 * provides **fast lookup** (O(1) time complexity)
 * => a collection with unique elements and fast lookup (_Ex: removing duplicates from a dataset, like storing unique product codes_)
@@ -542,7 +542,7 @@ history.Push("Page 2");
 Console.WriteLine(history.Pop()); // Output: Page 2 (last inserted item)
 ```
 
-### Queue - The Queue<T> 
+### Queue<T> 
 * a **`first-in, first-out`** (FIFO) collection of objects. 
 * _no direct access to elements; only first item can be dequeued_
 * _fast enqueue (adding items) and dequeue (removing items) (O(1) time complexity)_
