@@ -1,10 +1,11 @@
 ===========================================================================
 # Power of React
-* -> create reusable component and using JSX to combine it
-* -> virtual DOM enables better interaction at less cost
-* -> backed by a strong community: Facebook, developers around the world
-* -> more plexible because it's library not a framework, so we can apply multiple kind of architect or library to complete our purpose
-* -> Cross-platform Functionality
+* -> **`component-based`** and **`JSX`**: write UI using Javascript code in XML style; resuable and self-contained component
+* -> **`Virtual DOM`** enables better interaction at less cost
+* -> **`Unidirectional Data Flow`** - data flows from parent components to child components so it's more predictable and easier to debug
+* -> **`Hooks`** - interfere in lifecycle and manage state better
+* -> support **`Server-side rendering`** - React can be used for server-side rendering, which can improve the initial loading time and SEO performance of applications
+* -> strong **`community`**: Facebook, developers around the world
 
 # Different between 'client-side rendering' and 'server-side rendering' ?
 ## server-side rendering
