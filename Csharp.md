@@ -473,7 +473,7 @@ public interface IList : System.Collections.ICollection
 ### Array
 
 #### Single-dimensional arrays
-* an array is a fixed-size collection 
+* an array is a **`fixed-size`** collection 
 * have specific type
 
 #### Multidimensional arrays
@@ -497,7 +497,8 @@ Console.WriteLine(myList[1]); // Output: Hello
 ```
 
 ### List<T> 
-* -> a **`dynamically growing`** collection with fast **`access by index`** (_ensure order_)
+* -> a **`Dynamic array`** with fast **`access by index`** (_ensure order_)
+* -> more easy to use with many built-in functionalities like .Add(), .Remove(), .Contains(), sorting, searching, and filtering
 ```cs
 List<string> students = new List<string> { "Alice", "Bob", "Charlie" };
 students.Add("David"); // Add a new student
