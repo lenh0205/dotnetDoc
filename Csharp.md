@@ -616,7 +616,8 @@ Console.WriteLine(userSessions[1]); // Output: User1
 * We can perform dynamic allocation of the memory inside Hashtable
 
 ## 'System.String' or 'System.Text.StringBuilder' classes
-* offer similar functionality for accessing characters, determining string lengths, and performing common string operations
+* -> StringBuilder sẽ performance hơn nếu ta cần frequently update
+
 ### System.String
 * System.String objects are **`immutable`**, 
 * meaning that once created, their values `cannot be changed` 
