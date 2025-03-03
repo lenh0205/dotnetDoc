@@ -438,6 +438,7 @@ int i = (int)Obj;    // Unboxing
 ### interface
 
 #### IEnumerable
+* -> exposes an enumerator, which supports a simple iteration over a collection
 
 #### ICollection
 * -> defines size, enumerators, and synchronization methods for all nongeneric collections
