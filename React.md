@@ -82,17 +82,13 @@
 <script defer src="script.js"></script>
 ```
 
-# </img>/ vs. </picture>/
-* -> </img>/ loads a single image, while </picture>/ allows multiple sources for responsive images, improving performance and adaptability.
+# <img> vs. <picture>
+* -> **img** loads a single image, 
+* -> while **picture** allows multiple sources for responsive images, improving performance and adaptability.
 
-# Important <form> Attributes & Security
+# Important 'form' element Attributes & Security
 * -> action, method, enctype, novalidate
 * -> Security: Use HTTPS, validate inputs, implement CSRF protection, and sanitize user input
-
-# <div> vs. <span> vs. HTML5 Sections
-* -> <div>: Block-level container
-* -> <span>: Inline container
-* -> <section>, <article>: Semantic content grouping for SEO and accessibility.
 
 # data-* Attributes
 * -> Custom attributes for storing extra data. Example: <button data-user-id="123">Click</button>, accessible via JavaScript (element.dataset.userId).
