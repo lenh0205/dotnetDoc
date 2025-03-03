@@ -63,7 +63,15 @@
 * -> better APIs (Canvas, WebSockets, Geolocation)
 
 # HTML Semantics
-* -> Semantic tags (**<header>, <nav>, <main>, etc.**) improve accessibility, SEO, and code readability. Search engines understand content better, and screen readers provide a better user experience.
+* -> Semantic tags improve accessibility, SEO, and code readability. Search engines understand content better, and screen readers provide a better user experience
+```html
+<header>
+<nav>
+<main>
+<footer>
+<article>
+<section>
+```
 
 # Async vs. Defer
 * -> async: Loads and executes the script immediately, without waiting for the DOM to load
@@ -116,15 +124,18 @@ $ https://example.com/article/how-to-code # SEO-Friendly
 # ARIA (Accessible Rich Internet Applications)
 * -> Attributes (aria-label, aria-hidden, role) help screen readers and improve accessibility.
 
-# Avoiding <table> for Layout
+# Avoiding 'table' element for Layout
 * -> Tables are rigid, not responsive, and harm accessibility. Use CSS Flexbox/Grid instead.
 
 # Embedding HTML Documents
-* -> Use <iframe src="page.html"></iframe> to embed another HTML document.
+```html
+<!-- embed another HTML document -->
+<iframe src="page.html"></iframe>
+```
 
 # Embedding Video & Audio
-* -> <video> with controls, autoplay, loop, poster
-* -> <audio> with controls, autoplay, loop
+* -> **video** video with controls, autoplay, loop, poster
+* -> **audio** with controls, autoplay, loop
 
 # Cookies vs. localStorage vs. sessionStorage
 * -> Cookies: Small, sent with every request, expires, used for authentication
