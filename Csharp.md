@@ -529,6 +529,19 @@ Console.WriteLine(employees[101]); // Output: Alice
 HashSet<int> uniqueNumbers = new HashSet<int> { 1, 2, 3, 4 };
 uniqueNumbers.Add(3); // Duplicate, ignored
 Console.WriteLine(uniqueNumbers.Contains(2)); // Output: True
+
+// iterate through the HashSet to access an element:
+HashSet<string> names = new HashSet<string> { "Alice", "Bob", "Charlie" };
+foreach (string name in names)
+{
+    Console.WriteLine(name);
+}
+
+// convert HashSet to a List to access an element (if indexing is needed):
+HashSet<int> numbers = new HashSet<int> { 10, 20, 30, 40 };
+List<int> numberList = numbers.ToList();
+
+Console.WriteLine(numberList[1]); // Output: Could be 20, but order is not guaranteed
 ```
 
 ### Stack<T> 
