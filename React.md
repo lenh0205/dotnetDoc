@@ -63,7 +63,7 @@
 * -> better APIs (Canvas, WebSockets, Geolocation)
 
 # HTML Semantics
-* -> Semantic tags (<header>, <nav>, <main>, etc.) improve accessibility, SEO, and code readability. Search engines understand content better, and screen readers provide a better user experience.
+* -> Semantic tags (**<header>, <nav>, <main>, etc.**) improve accessibility, SEO, and code readability. Search engines understand content better, and screen readers provide a better user experience.
 
 # Async vs. Defer
 * -> async: Loads and executes the script immediately, without waiting for the DOM to load
