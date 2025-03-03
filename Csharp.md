@@ -482,9 +482,18 @@ public interface IList : System.Collections.ICollection
 #### Implicitly typed arrays
 
 ### ArrayList (legacy)
-* -> giống mảng nhưng **`size không cố định`** 
-* -> các phần tử đều sẽ được lưu với kiểu là **`object`**
-* => nên có thể thêm, xoá, sửa phần tử với các kiểu khác nhau; nhưng không thể support LINQ queries
+* -> giống **List<T>** nhưng **`no type-safety`** (các phần tử đều sẽ được lưu với kiểu là **`object`**)
+* => required value type to be **boxed** into objects when added and **unboxed** when retrieved; leads to extra memory allocation and CPU overhead
+* => only use this in legacy codebases where refactoring to List<T> is not an option
+
+```cs
+ArrayList myList = new ArrayList();
+myList.Add(10);   // Adding an integer
+myList.Add("Hello"); // Adding a string
+myList.Add(3.14); // Adding a double
+
+Console.WriteLine(myList[1]); // Output: Hello
+```
 
 ### List<T> 
 * -> a **`dynamically growing`** collection with fast **`access by index`** (_ensure order_)
