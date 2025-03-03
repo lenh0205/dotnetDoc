@@ -82,8 +82,8 @@
 <script defer src="script.js"></script>
 ```
 
-# <img> vs. <picture>
-* -> <img> loads a single image, while <picture> allows multiple sources for responsive images, improving performance and adaptability.
+# </img>/ vs. </picture>/
+* -> </img>/ loads a single image, while </picture>/ allows multiple sources for responsive images, improving performance and adaptability.
 
 # Important <form> Attributes & Security
 * -> action, method, enctype, novalidate
