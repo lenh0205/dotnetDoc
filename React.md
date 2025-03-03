@@ -43,7 +43,24 @@
 
 ===========================================================================
 # HTML5 and Features
-* -> HTML5 introduced semantic elements (<article>, <section>), multimedia support (<audio>, <video>), form enhancements, offline storage (localStorage, sessionStorage), and better APIs (Canvas, WebSockets, Geolocation).
+* _HTML5 introduced:_
+* -> semantic elements
+```html 
+<article>
+<section>
+```
+
+* -> multimedia support
+```html
+<audio>
+<video>
+```
+
+* -> form enhancements
+
+* -> offline storage (localStorage, sessionStorage)
+
+* -> better APIs (Canvas, WebSockets, Geolocation)
 
 # HTML Semantics
 * -> Semantic tags (<header>, <nav>, <main>, etc.) improve accessibility, SEO, and code readability. Search engines understand content better, and screen readers provide a better user experience.
