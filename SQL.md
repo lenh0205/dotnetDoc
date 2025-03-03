@@ -184,6 +184,16 @@ SELECT * FROM Person.Contact WHERE ContactID < 20
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED; -- turn it off
 ```
 
+## 34. Recursive CTE
+* -> is **`a CTE`** that **`calls itself repeatedly`** until **a termination condition is met**
+* => useful for problems like **`Hierarchical data `**(_e.g., employees & managers, category trees_), **`Graph traversal`** (_e.g., finding shortest paths_), **`Generating sequences`** (_e.g., numbers, dates_)
+
+```sql
+-- SQL Server limits recursion to 100 levels by default
+-- to override it:
+OPTION (MAXRECURSION 200);
+```
+
 ## 19. Subquery:
 * * -> is **`a query nested inside another SQL query`**
 * => return a single value, a list of values, or a table, depending on the context
@@ -216,16 +226,6 @@ BEGIN
     FROM Customers
     JOIN inserted ON Customers.CustomerID = inserted.CustomerID;
 END;
-```
-
-## 34. Recursive CTE
-* -> is **`a CTE`** that **`calls itself repeatedly`** until **a termination condition is met**
-* => useful for problems like **`Hierarchical data `**(_e.g., employees & managers, category trees_), **`Graph traversal`** (_e.g., finding shortest paths_), **`Generating sequences`** (_e.g., numbers, dates_)
-
-```sql
--- SQL Server limits recursion to 100 levels by default
--- to override it:
-OPTION (MAXRECURSION 200);
 ```
 
 ### Structure
@@ -293,7 +293,7 @@ SELECT * FROM Numbers;
 * -> Stored Procedure, Function (TVF, Scalar), View, CTE, Temp Table
 
 ### View:
-* is a **`virtual table`** (means **treated/behaves like a table** but it **doesn't physically store the data**, just a stored query produces a result set dynamically when queried) based on **`a SELECT query`**
+* is a **`virtual table`** (_means **treated/behaves like a table** but it **doesn't physically store the data**, just a stored query produces a result set dynamically when queried_) based on **`a SELECT query`**
 * => allows to **`encapsulate complex or common queries and abtract it to simplify complex joins and aggregations`**
 
 ```sql
@@ -306,6 +306,10 @@ SELECT * FROM vw_ActiveUsers;
 -- equivalent to:
 SELECT Id, Name, Email FROM Users WHERE IsActive = 1;
 ```
+
+### UDF - User-Defined Functions
+* -> **`a function created by the user`** to **perform specific operations and return a result**
+* => used to encapsulate reusable logic, simplify complex queries, and improve code maintainability
 
 ### Procedure:
 * -> is a **`precompiled collection of SQL statements`** stored in a database 
@@ -362,6 +366,7 @@ SELECT * FROM @TempUsers;
 * -> optimized by using **`Indexed Views`** - **`physically stores the result set`** once the required **`clustered index`** is created and **`automatically updated when base tables change`**
 * => faster **performance**, especially for **`complex, frequently used aggregations, joins, query`** 
 * -> can use **non-deterministic functions** (_like GETDATE()_)
+* -> can **perform data manipulation operations** under certain conditions
 
 ```sql
 -- indexed view for a complex aggregation that is used frequently
@@ -389,11 +394,29 @@ GROUP BY ProductID;
 CREATE UNIQUE CLUSTERED INDEX IX_SalesSummary 
 ON vw_SalesSummary(ProductID);
 ```
+```sql
+-- we can SELECT, INSERT, UPDATE, and DELETE data of a table indirectly through a view if
+-- -> the view is based on a single table (or an updatable multi-table join)
+-- -> it does not contain DISTINCT, GROUP BY, HAVING, TOP, UNION, AGGREGATE FUNCTIONS (like SUM, COUNT, AVG), etc.
+-- -> the view does not use JOIN on non-key columns
+-- -> all columns in the view map directly to a real table column
+
+-- define view:
+CREATE VIEW ActiveEmployees AS
+SELECT EmployeeID, Name, Salary
+FROM Employees
+WHERE Status = 'Active';
+
+-- modify data using this view:
+UPDATE ActiveEmployees SET Salary = 60000 WHERE EmployeeID = 1;
+DELETE FROM ActiveEmployees WHERE EmployeeID = 2;
+```
 
 * **Function**
 * -> can take **parameters**
 * -> cannot have indexes, so they may perform worse on large datasets
 * -> cannot use **non-deterministic functions**
+* -> cannot modify the database state
 
 ## 'Store procedures' vs 'Function'
 
@@ -835,40 +858,79 @@ SELECT DISTINCT c.* FROM customers c JOIN orders o ON c.customer_id = o.customer
 * -> **`'Index' tuning`**
 
 ## 18. Difference between TRUNCATE, DELETE and DROP commands?
+
 ### DELETE
-* a Data Manipulation Language Command (DML) -> used to modify `data`
-* can either `delete all` the rows or can delete specific rows from a table (based on conditions using the `WHERE` clause)
-* slower than the TRUNCATE command. The TRUNCATE command does not remove the structure of the table
-* DELETE operations are logged individually -> allows for rollback or recovery if necessary
+* -> removes **`specific rows`** from a table **based on a condition (WHERE clause)**
+* -> **`logs each deleted row`**, making it **slower for large datasets**
+* -> **`can be rolled back`** if used within **a transaction (COMMIT / ROLLBACK)**
+* -> does **`not reset auto-increment counters`**
+* => when we want to **remove specific records** and may want to **roll back**
+
+```sql
+DELETE FROM table_name WHERE condition;
+DELETE FROM table_name; -- delete all rows in table
+```
 
 ### TRUNCATE
-* a Data Definition Language Command (DDL) -> used to modify the `structure of the database`
-* used to `delete all the rows of a relation (table)` in one go. 
-* we `can’t delete the single row` as here `WHERE` clause is not used
-* It is comparatively faster than the DELETE command as it deletes all the rows fastly. 
-* it deallocates the data pages without logging each row deletion -> can't use the ROLLBACK command to restore the data
+* -> removes **`all rows`** from a table; faster than DELETE since it **deallocates pages instead of deleting rows one by one**
+* -> **`without logging individual row deletions`**
+* -> **`cannot be rolled back`** in **most databases** (_except inside transactions in some databases like PostgreSQL_)
+* -> **`resets auto-increment counters`**
+* => when we need to **quickly remove all records** but **keep the table structure**
+
+```sql
+TRUNCATE TABLE table_name;
+```
 
 ### DROP
-* a Data Definition Language Command (DDL) -> modify the `structure of the database`
-* permanently removes the specified database table, including all its contents (definition, indexes, data, constraints, triggers,...)
-* can't use the ROLLBACK command to restore the table
-* DROP can't be used with tables referenced by foreign keys
+* -> completely removes **`the table structure and all its data`**; making it faster between three 
+* -> it **`cannot be rolled back`**
+* => for no longer need the table and want to remove it completely
+
+```sql
+DROP TABLE table_name;
+```
+
 
 ## 19. Primary Key and Foreign Key
 * **Key** - a column or a combination of columns that uniquely identifies a record in a database table
 
 ### Primary Key
-* A primary key is used to ensure that data in the `specific column` is `unique` 
-* A column `cannot have NULL` values. 
-* It is either an existing table column or a column that is specifically generated by the database according to a defined sequence
+* -> is **a column or a set of columns** in a table that **`uniquely identifies each row`**
+* -> ensures that the **values in this column(s)** are **`unique`** and **`not null`**
+
+```sql
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,  -- EmployeeID is unique and not null
+    Name VARCHAR(100),
+    Department VARCHAR(50)
+);
+```
 
 ### Foreign Key
-* A foreign key is `a column or group of columns` in a relational database table that `provides a link` between data in two tables. 
-* It is a column (or columns) that references a column (most often the primary key) of another table
+* -> **a column or a set of columns** that **`establishes a relationship between two tables`**
+* -> it **`references the primary key of another table`**
+
+```sql
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    EmployeeID INT,
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)  -- Foreign key linking to Employees table
+);
+```
 
 ### Composite key
-* it can also be understood as a `primary key` made by the combination of two or more columns in a table to uniquely identify every row in a table
-* A composite key cannot be null
+* -> is a **`primary key`** that consists of **`two or more columns`**
+* -> is used when **a single column cannot uniquely identify a row**
+
+```sql
+CREATE TABLE StudentCourses (
+    StudentID INT,
+    CourseID INT,
+    EnrollmentDate DATE,
+    PRIMARY KEY (StudentID, CourseID)  -- Composite Key (both columns together must be unique)
+);
+```
 
 ### Candidate Key
 * A Candidate for Primary Key (may or may not be selected)
@@ -887,36 +949,35 @@ SELECT DISTINCT c.* FROM customers c JOIN orders o ON c.customer_id = o.customer
 * returns all the records in the first SELECT query that are not returned by the second SELECT query
 
 ## Database Schema in SQL Server
-* a `a list of logical structures of data` (_tables, views, stored procedures, indexes, triggers, functions_)
-* a  schema is an individual entity (container of objects) distinct from the user who constructs the object
-
- v * -> Schemas may be assigned security permissions -> an effective method for distinguishing and defending database objects based on user access privileges
-
-### feature
-* A schema can belong to only `one database` whereas a database can have one or `multiple schemas`
-* `SQL Server` provides us with a few **`built-in schemas`** such as **`dbo, guest, sys, etc`**
-* A database schema can be `owned` by a `database role` or an `application role` along with the `database user` - They are called **`schema owners`**
-* _`dbo`_ is the **`default schema`** for a newly created database.
-* `Schema ownership` _can be transferred_ from one user to another user in the same database.
-* A database user can be dropped without dropping the database objects owned by the user; But the schema `cannot be deleted` if it owns database objects
-```
-CREATE SCHEMA hrdbo AUTHORIZATION Steve;
-
-CREATE TABLE hrdbo.Consultant
-(  
-    ConsultantID int,
-    FirstName nvarchar(50) NOT NULL,  
-    LastName nvarchar(50) NOT NULL
-);
-```
+* -> is **`a logical container that groups database objects`** such as _tables, views, indexes, stored procedures, and other related objects_
+* -> it helps **`organize and manage database objects`** efficiently within a database
+* => like **namespace for objects** - provides a way to **`group related database objects under a common name`**, **`preventing name conflicts`**
+* => can **`assign different users or roles specific permissions on a schema`**
+* _each schema contain its own set of tables and other objects_
+* _in SQL Server, if no schema is specified, objects are created in the **`dbo`** (Database Owner) schema **by default**_
 
 ## 22. WHERE - HAVING
-* The `HAVING` clause was added to SQL because the `WHERE` keyword cannot be used with **aggregate functions**
+* -> the difference is mainly related to **`when and how they filter data in a query`**
+
+### WHERE
+* -> filters **`individual rows before any grouping`**
+* _cannot be used with **aggregate functions: SUM(), AVG(), COUNT(), ...**_
+
+```sql
+SELECT CustomerID, SUM(OrderAmount) AS TotalAmount
+FROM Orders
+WHERE OrderAmount > 400  -- Filters individual rows first
+GROUP BY CustomerID;
 ```
-SELECT COUNT(CustomerID), Country
-FROM Customers
-GROUP BY Country
-HAVING COUNT(CustomerID) > 5;
+
+### HAVING
+* -> filters **`grouped/aggregated result after GROUP BY`**
+
+```sql
+SELECT CustomerID, SUM(OrderAmount) AS TotalAmount
+FROM Orders
+GROUP BY CustomerID
+HAVING SUM(OrderAmount) > 1000;  -- Filters after aggregation
 ```
 
 ## 23. Hàm Count để làm gì ?
@@ -979,18 +1040,32 @@ WHERE CustomerID = 1;
 
 ## 27. Sự khác biệt giữa khóa chính (Primary Key) và các ràng buộc duy nhất (Unique Constraints) là gì?
 ### Primary Key:
-* _`a column or a combination`_ of columns that `uniquely identifies each row` in a table
-* _`only one primary key`_ defined per table.
-* _`automatically have a NOT NULL constraint`_, meaning they cannot contain NULL values.
-* create _`a clustered index`_ by default - physically organizing the data in the table based on the key values
-* are typically used as the **`main identifier`** for a table and are often used as a `reference in foreign key` relationships with other tables.
+* -> can be a single column or multiple columns and ensures all values in the column(s) are unique
+* -> **only one** Primary Key per table
+* -> **not allow NULL values**
+* -> automatically creates a **`clustered index`**
+
+```sql
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,  -- Cannot be NULL, must be unique
+    Name VARCHAR(100),
+    Email VARCHAR(100) UNIQUE  -- UNIQUE constraint applied
+);
+```
 
 ### A Unique Constraint 
-* ensures that the _`values in a column or a combination of columns`_ are unique, but do not necessarily serve as the main identifier for a table as primary key
-* _`Multiple unique constraints`_ can be defined per table, allowing uniqueness to be enforced on different sets of columns.
-* _`can include NULL values`_, and multiple rows with NULL values in the constrained columns are allowed since NULL is not considered equal to any other value, including another NULL.
-* Unique constraints create a _`non-clustered index`_ by default - which provides efficient lookup for the unique values but does not organize the data physically.
-* Unique constraints can be referenced by foreign keys, just like primary keys
+* -> can be a single column or multiple columns and ensures all values in the column(s) are unique
+* -> can have **multiple** UNIQUE constraints in a table
+* -> **allow NULL values** (_but they must be distinct_)
+* -> automatically creates a **`non-clustered index`**
+
+```sql
+CREATE TABLE Students (
+    StudentID INT PRIMARY KEY,
+    Email VARCHAR(100) UNIQUE,  -- Multiple UNIQUE constraints are allowed
+    PhoneNumber VARCHAR(15) UNIQUE
+);
+```
 
 ## 28. Chuẩn hóa - Normalization là gì? Ví dụ về 1NF, 2NF, 3NF Database
 * Normalization is `process of organizing data in a database` to protect data and eliminate redundancy, inconsistent dependency
@@ -1046,3 +1121,78 @@ WHERE CustomerID = 1;
 
 ### BCNF - Boyce Codd Normal Form 
 * Even when a database is in 3rd Normal Form, still there would be anomalies resulted if it has more than one `Candidate Key`
+
+## 5. Implement "search" feature
+* -> to achive this feature we can use **`SQL 'LIKE' Queries`**, **`Full-Text Search`**, **`Elasticsearch`**, **`Vector Search (AI-based)`**
+
+```cs
+// Example: a "product search feature" on an e-commerce website
+// Imagine an online electronics store where users search for products using keywords like:
+// "gaming laptop with RTX 3060"
+// "wireless Bluetooth headphones"
+// "smartphone with 120Hz display and fast charging"
+```
+
+### Basic SQL LIKE Queries (Not Recommended for Large Data)
+* -> Simple to implement
+* -> Slow for large datasets
+* -> Doesn't handle synonyms or ranking
+```sql
+SELECT * FROM Products WHERE ProductName LIKE '%laptop%';
+```
+
+### FTS - Full-Text Search
+* -> Matches even if words are in different order
+* -> Indexes improve performance.
+* -> Can rank results based on relevance
+
+```sql
+-- Enable Full-Text Search on a Table
+
+-- Step 1: Create a Full-Text Catalog
+CREATE FULLTEXT CATALOG MyFullTextCatalog;
+
+-- Step 2: Create a Full-Text Index on a table column
+CREATE FULLTEXT INDEX ON Products(ProductDescription)
+KEY INDEX PK_Products ON MyFullTextCatalog;
+
+-- Perform a Full-Text Search using CONTAINS
+SELECT * FROM Products 
+WHERE CONTAINS(ProductDescription, 'laptop');
+Finds all products with the word "laptop".
+
+-- Search for a Phrase using FREETEXT
+-- Finds descriptions that loosely match "fast laptop".
+SELECT * FROM Products 
+WHERE FREETEXT(ProductDescription, 'fast laptop');
+
+-- Boolean Search Example
+-- Finds products that contain both "laptop" and "touchscreen".
+SELECT * FROM Products 
+WHERE CONTAINS(ProductDescription, 'laptop AND touchscreen');
+```
+
+#### Key Features
+* -> Indexes for Fast Searching
+* Uses a Full-Text Index to speed up text-based searches.
+* Unlike LIKE '%keyword%', which scans the entire table, FTS searches indexed words efficiently.
+
+* -> Advanced Search Capabilities
+* Supports searching for whole words, phrases, proximity searches, and even synonyms.
+* Allows ranking of results based on relevance.
+
+* -> Language Processing
+* Can ignore common words (e.g., "the", "is") and apply stemming (e.g., "running" matches "run").
+* Supports multiple languages.
+
+* -> Boolean and Proximity Searches
+* Can use operators like AND, OR, NEAR, NOT for complex searches.
+
+### Elasticsearch (Search Engine)
+* -> Used for scalable and flexible full-text search.
+* -> Supports autocomplete, typo corrections, and ranking.
+* -> More powerful than SQL Full-Text Search.
+
+### Vector Search (AI-based)
+* -> Uses word embeddings (like OpenAI's models) to understand semantic meaning.
+* -> Example: Searching for "high-performance gaming laptop" might also return "powerful gaming notebook".
