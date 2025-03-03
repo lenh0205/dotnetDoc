@@ -212,7 +212,7 @@ Console.WriteLine(p1 == p2); // True (value-based equality)
 
 ```cs
 // -----> immutability
-// makes it easier to work with immutable data because it provides "with" expression for creating new modified copy
+// makes it easier to work with immutable data because it provides "with" expression for creating new modified instances
 var p3 = p1 with { Age = 26 };  // Creates a new object with modified Age
 ```
 
@@ -433,8 +433,27 @@ int i = (int)Obj;    // Unboxing
 * _when you modify a string, a new object is created instead of modifying the original_
 * _assigning a string to another does not create a reference to the same object (unlike other reference types)_
 
-## 1. IEnumerable
-* **`System.Collections.Concurrent`**
+## collection in C#
+
+### interface
+
+#### IEnumerable
+
+#### ICollection
+* -> defines size, enumerators, and synchronization methods for all nongeneric collections
+* -> Ex: **Queue**, **Stack** directly implement the ICollection interface
+```cs
+public interface ICollection : System.Collections.IEnumerable
+```
+
+#### IList
+* -> collection of objects that can be **`individually accessed by index`**
+```cs
+public interface IList : System.Collections.ICollection
+```
+
+#### IDictionary
+* -> a collection of **`key/value pairs`**
 
 ### Collections
 * -> https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/collections
@@ -468,35 +487,94 @@ int i = (int)Obj;    // Unboxing
 * => nên có thể thêm, xoá, sửa phần tử với các kiểu khác nhau; nhưng không thể support LINQ queries
 
 ### List<T> 
-* ->  **`a generic collection`**
-* -> ensuring **`type safety`** at compile time
-* -> hỗ trợ nhiều tính năng
-
-### Collection<T>
-* Generic collection
-* provides a basic collection of elements without any specific ordering guarantees
+* -> a **`dynamically growing`** collection with fast **`access by index`** (_ensure order_)
+```cs
+List<string> students = new List<string> { "Alice", "Bob", "Charlie" };
+students.Add("David"); // Add a new student
+students.Remove("Bob"); // Remove a student
+Console.WriteLine(students[0]); // Access first student
+```
 
 ### Dictionary -The Dictionary<TKey, TValue> 
-* a collection of `KeyValuePair<TKey, TValue>`
-* allows efficient lookup and retrieval of values based on `a unique key`
+* a collection of **`KeyValuePair<TKey, TValue>`**
+* => fast lookup (O(1) time complexity) of values based on unique keys
 
-### LinkedList - LinkedList<T> 
-* a `doubly linked list` of objects of type T. 
-* It allows efficient insertion and removal of inserting or removing items `at any positions`
-
-### Stack: The Stack<T> 
-* a `last-in, first-out` (LIFO) collection of objects.
-* Elements are added and removed from the top of the stack
-* Non-generic của nó là **`Stack`**
-
-### Queue - The Queue<T> 
-* a `first-in, first-out` (FIFO) collection of objects. 
-* Elements are added to the end of the queue and removed from the beginning
-* Non-generic của nó là **`Queue`**
+```cs
+Dictionary<int, string> employees = new Dictionary<int, string>
+{
+    { 101, "Alice" },
+    { 102, "Bob" }
+};
+Console.WriteLine(employees[101]); // Output: Alice
+```
 
 ### HashSet - The HashSet<T> 
-* an `unordered collection` of `unique elements`
-* It provides fast insertion, removal, and lookup operations
+* an **`unordered`** collection of **`unique elements`**
+* provides **fast lookup** (O(1) time complexity)
+* => a collection with unique elements and fast lookup (_Ex: removing duplicates from a dataset, like storing unique product codes_)
+
+```cs
+HashSet<int> uniqueNumbers = new HashSet<int> { 1, 2, 3, 4 };
+uniqueNumbers.Add(3); // Duplicate, ignored
+Console.WriteLine(uniqueNumbers.Contains(2)); // Output: True
+```
+
+### Stack<T> 
+* a **`last-in, first-out`** (LIFO) collection of objects
+* _no direct access to elements; only the top element can be accessed_
+* _fast **push** (adding) and **pop** (removing) operations (O(1) time complexity)_
+* => process elements in reverse order, like an undo mechanism (_Ex: implementing undo/redo operations or backtracking algorithms_)
+
+```cs
+Stack<string> history = new Stack<string>();
+history.Push("Page 1");
+history.Push("Page 2");
+
+Console.WriteLine(history.Pop()); // Output: Page 2 (last inserted item)
+```
+
+### Queue - The Queue<T> 
+* a **`first-in, first-out`** (FIFO) collection of objects. 
+* _no direct access to elements; only first item can be dequeued_
+* _fast enqueue (adding items) and dequeue (removing items) (O(1) time complexity)_
+* => to process elements in order (_Ex: Task processing/scheduling, message queues, or handling print jobs_)
+
+```cs
+Queue<string> tasks = new Queue<string>();
+tasks.Enqueue("Task 1");
+tasks.Enqueue("Task 2");
+
+Console.WriteLine(tasks.Dequeue()); // Output: Task 1 (first inserted item)
+```
+
+### LinkedList - LinkedList<T> 
+* **`doubly linked list`** - each node has pointers to previous and next nodes
+* _**fast insertions/removals** in the middle of the list (O(1) time complexity)_
+* _**slower lookups** compared to List<T> (O(n) time complexity)_
+* => frequently insert/remove elements in the middle of the collection (_Ex:  Implementing a browser's back and forward navigation_)
+
+```cs
+LinkedList<string> browsers = new LinkedList<string>();
+browsers.AddLast("Google Chrome");
+browsers.AddLast("Firefox");
+browsers.AddFirst("Edge");
+
+Console.WriteLine(browsers.First.Value); // Output: Edge
+```
+
+### ConcurrentDictionary<TKey, TValue>
+* **`thread-safe`** Dictionary for concurrent applications.
+* prevents data corruption when accessed from multiple threads.
+* best for scenarios requiring **`highly efficient multi-threaded lookups`**
+* => when multiple threads need to read/write key-value pairs simultaneously (_Ex:  Storing active user sessions in a web application_)
+
+```cs
+using System.Collections.Concurrent;
+
+ConcurrentDictionary<int, string> userSessions = new ConcurrentDictionary<int, string>();
+userSessions.TryAdd(1, "User1");
+Console.WriteLine(userSessions[1]); // Output: User1
+```
 
 ### SortedSet: The SortedSet<T> 
 * a `sorted collection` of `unique elements`. 
