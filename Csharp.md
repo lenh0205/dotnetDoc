@@ -212,7 +212,7 @@ Console.WriteLine(p1 == p2); // True (value-based equality)
 
 ```cs
 // -----> immutability
-// makes it easier to work with immutable data because it provides "with" expression for creating new modified instances
+// makes it easier to work with immutable data because it provides "with" expression for creating new modified copy
 var p3 = p1 with { Age = 26 };  // Creates a new object with modified Age
 ```
 
