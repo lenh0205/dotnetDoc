@@ -466,10 +466,6 @@ public interface IList : System.Collections.ICollection
 
 #### Iterators
 
-#### System.Collections.Concurrent
-* help to achieve **`thread-safe`** code
-* ConcurrentStack<T> , ConcurrentQueue<T> , ConcurrentDictionary<TKey,TValue>
-
 ### Array
 
 #### Single-dimensional arrays
@@ -587,7 +583,11 @@ browsers.AddFirst("Edge");
 Console.WriteLine(browsers.First.Value); // Output: Edge
 ```
 
-### ConcurrentDictionary<TKey, TValue>
+### System.Collections.Concurrent
+* help to achieve **`thread-safe`** code
+* **ConcurrentStack<T>**, **ConcurrentQueue<T>**, **ConcurrentDictionary<TKey,TValue>**
+
+#### ConcurrentDictionary<TKey, TValue>
 * **`thread-safe`** Dictionary for concurrent applications.
 * prevents data corruption when accessed from multiple threads.
 * best for scenarios requiring **`highly efficient multi-threaded lookups`**
