@@ -1,5 +1,5 @@
 ===========================================================================
-# YOLO
+# YOLO (You Only Look Once)
 * -> is a **`real-time object detection algorithm`** known for its **speed** and **accuracy**
 
 ## Mechanism
