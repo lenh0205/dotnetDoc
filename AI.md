@@ -47,10 +47,19 @@ $ python detect.py --weights yolov5s.pt --img 640 --source data/images/your_imag
 * -> after running detection, check the "runs/detect/exp/" folder for the output image with detected objects
 
 ===========================================================================
-# Train YOLO on custom numbers
-* -> **`collect`** a dataset of images with numbers
-* -> **`label`** (using **`LabelImg`**) to annotate images and generate YOLO-compatible labels 
-* =>
+# Role of 'Python'- For Modifying, Training, and Deploying YOLO Models
+* -> Python is the main language used to interact with YOLO
+* -> we can modify and fine-tune the model using Python scripts
+* -> we can integrate YOLO with other tools (like OpenCV and OCR libraries)
+
+```py
+// script to loads a YOLO model, runs inference, and shows detected objects
+from ultralytics import YOLO
+
+model = YOLO("yolov8n.pt")  # Load pre-trained YOLOv8 model
+results = model("image.jpg")  # Run detection on an image
+results.show()  # Display results
+```
 
 ===========================================================================
 # Steps
@@ -119,3 +128,26 @@ $ 0 0.45 0.50 0.30 0.40
 * -> After YOLO detects number regions, an OCR tool (like Tesseract) extracts exact digits
 * -> YOLO is primarily designed for object detection, not text recognition; for better accuracy in number extraction, we may need to combine YOLO with an OCR model like **`Tesseract`** or **`EasyOCR`**
 * -> use **`OCR`** engine to recognize the detected numbers
+
+===========================================================================
+# Alternatives to YOLOv5 for Object Detection
+
+## YOLOv8 (Latest Version)
+Faster and more accurate than YOLOv5.
+Easier to train and modify using Python.
+Best for real-time applications.
+Use Case: If you want a more optimized and powerful YOLO model
+
+## Faster R-CNN (Region-Based Convolutional Neural Network)
+More accurate but slower than YOLO.
+Uses region proposals to detect objects.
+Use Case: When accuracy is more important than speed (e.g., medical image analysis)
+
+## SSD (Single Shot MultiBox Detector)
+Similar to YOLO, but processes images differently.
+Faster than Faster R-CNN but less accurate.
+Use Case: Works well for small objects in images.
+
+## EfficientDet (Google’s Efficient Object Detection)
+More power-efficient than YOLO.
+Use Case: Mobile and embedded applications.
