@@ -19,6 +19,7 @@ gian nào tới thời gian nào chẳng hạn, team nhiêu người, mấy dev 
 - rất nhiều tình huống ngoài gì đã chuẩn bị thì cần trả lời như nào ?
 - hãy câu thêm thời gian (bằng những ví dụ chẳng hạn)
 - khi gặp câu hỏi về compare ta cần quan tầm đk nào ? sao dùng cái này mà không dùng cái kia ? VD: scope the answer with condition: is Constructor Injection is the most efficient;
+- khi có câu hỏi về gì đó liên quan đến project thì nên nói về working process, team member, description, technologies. rồi mới trả lời về câu hỏi chính
 - câu hỏi cuối buổi: (hỏi về overview, đừng chi tiết quá): How big is your team size? How far along is the development process? What are main technology that you are using? team-size ?
 
 # Keep in Mind
@@ -30,8 +31,9 @@ gian nào tới thời gian nào chẳng hạn, team nhiêu người, mấy dev 
 - tương tác, đừng cứng nhắc, làm thành 1 buổi pv 1 chiều, answer and question
 
 - vấn đề lớn nhất hiện tại: câu trả lời lý thuyết thiếu thực tế ? có thể cho ví dụ ? khi nào mình xài nó ? cần nghĩ lại quá trình mình làm việc ? 
+- vấn đề thứ 2 là trả lời dài dòng, chưa tập trung:nói về key point trước rồi mới nói về những cái khác sau (vì nhiều khi họ cũng chả nghe được phần sau)
 - trả lời câu hỏi phải thể hiện sự tự tin của mình, thật ngắn gọn và thể hiện đủ các ý chính ?
-- tương tự với những câu hỏi về technical: tại sao mình cần quan tầm đến nó/nó có ích gì ? khi cần dùng nó thì mình quan tâm đến những vấn đề gì ?
+- tương tự với những câu hỏi về technical: tại sao mình cần quan tầm đến nó/nó có ích gì ? nếu dùng nó thì sao ? nếu không dùng nó thì sao ? dùng trong trường hợp nào ? khi cần dùng nó thì mình quan tâm đến những vấn đề gì ?
 - từng chữ mình trả lời phải thực sự hiểu được, nắm thật chắc (tại sao mình phải làm vậy ? làm như nào?) (vì từ những từ đó ta có thể bị hỏi những vấn đến khác)
 
 - tập trung vào việc cho họ hiểu kiến thức thay vì trả lời cho xong câu hỏi ?
@@ -49,12 +51,14 @@ gian nào tới thời gian nào chẳng hạn, team nhiêu người, mấy dev 
 - chuẩn bị cả bài tập coding
 
 # Câu hỏi tự luyện
+- transaction: ví dụ về chuyển tiền
+- redis: use expire time, and static data (ko change nhiều); lack of memory; data accuracy
+- exception: reset stack trace
+- dài dòng nhưng chưa tập trung, cần 
+- Log4Net: a log file per date; search error cho nhiều ngày thì rất khó khăn - giải quyết bằng SumoLogic, Kibana ta cần đưa cho nó đường dẫn đến đống source (folder chứa file log của mình)
 - CQSR - do nhu cầu: việc đọc data nhiều hơn hoặc người viết query nhiều hơn; 
-- MVC , Jquery ?
-- xem lại UnitTest, Design pattern
 - technical Dự án hình dung lại cách mình làm, tại sao cần làm vậy ? trường hợp mình phải redirect về trang server-side ?
 - nếu thích technical phức tạp ? thì phức tạp như thế nào ? codebase nhiều project, integrate nhiều thứ, structure nhiều lớp như nào ?
-- finally vs finalize ?
 - typescript: support OOP (tạo class,...), strong type, ưu điểm so với javascript
 
 - khi nhận user story: investigate and hiểu về requirement (nhiều task thì phải có priority), make draft solution and dicussion with lead, estimate, implement:
