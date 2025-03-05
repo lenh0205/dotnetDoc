@@ -184,16 +184,6 @@ SELECT * FROM Person.Contact WHERE ContactID < 20
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED; -- turn it off
 ```
 
-## 34. Recursive CTE
-* -> is **`a CTE`** that **`calls itself repeatedly`** until **a termination condition is met**
-* => useful for problems like **`Hierarchical data `**(_e.g., employees & managers, category trees_), **`Graph traversal`** (_e.g., finding shortest paths_), **`Generating sequences`** (_e.g., numbers, dates_)
-
-```sql
--- SQL Server limits recursion to 100 levels by default
--- to override it:
-OPTION (MAXRECURSION 200);
-```
-
 ## 19. Subquery:
 * * -> is **`a query nested inside another SQL query`**
 * => return a single value, a list of values, or a table, depending on the context
@@ -288,6 +278,111 @@ SELECT * FROM Numbers;
 -- Output: 1    2   3   ...     10
 ```
 
+## 18. Cursor
+* -> is **a database object** used to retrieve, manipulate, and traverse row-by-row data from a result set
+
+### Use cases
+* -> if we're working with **modern SQL development**, **`90% of the time we don't need cursors`** - they are slow (_process one row at a time_), resource-intensive (_consume more memory and locking resources_)
+* -> Cursor should be **`avoided when possible`** and replacing with **`set-based operations`** (SELECT, JOIN, UPDATE, etc.) or **WHILE loops**
+* -> however, knowing about it is useful for debugging **existing database code**, **performance bottlenecks** in **`legacy applications that is currently using "cursor"`**;
+* -> or handling **rare scenarios**: **`row-by-row processing for complex business logic`**, **`working with dynamic SQL inside a stored procedure`**, iterating over a result set to execute different statements based on conditions
+
+### Common Alternative
+* -> avoid cursors for **`batch updates`** → Use UPDATE ... WHERE or MERGE.
+* -> avoid cursors for **`aggregations`** → Use SUM(), AVG(), GROUP BY, HAVING.
+* -> void cursors for **`searching/filtering`** → Use WHERE, INDEXING, FULL-TEXT SEARCH
+
+### Steps
+```sql
+DECLARE @EmployeeName NVARCHAR(100);
+
+-- Step 1: Declare the cursor
+DECLARE EmployeeCursor CURSOR FOR
+SELECT Name FROM Employees WHERE Department = 'IT';
+
+-- Step 2: Open the cursor
+OPEN EmployeeCursor;
+
+-- Step 3: Fetch data row-by-row 
+FETCH NEXT FROM EmployeeCursor INTO @EmployeeName; // first row
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    -- Step 4: Process each row 
+    PRINT 'Processing Employee: ' + @EmployeeName;
+    
+    -- Fetch the next row
+    FETCH NEXT FROM EmployeeCursor INTO @EmployeeName;
+END;
+
+-- Step 5: Close the cursor
+CLOSE EmployeeCursor;
+
+-- Step 6: Deallocate the cursor
+DEALLOCATE EmployeeCursor;
+```
+
+### real-world scenarios
+
+#### Performing Row-by-Row Processing
+If you have business logic that must be applied to each row separately, and there's no efficient way to do it using a set-based operation.
+📌 Example: Sending emails to customers based on individual calculations.
+
+sql
+Copy
+Edit
+DECLARE @Email NVARCHAR(255);
+
+DECLARE EmailCursor CURSOR FOR 
+SELECT Email FROM Customers WHERE NeedsNotification = 1;
+
+OPEN EmailCursor;
+FETCH NEXT FROM EmailCursor INTO @Email;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    EXEC SendEmailToCustomer @Email; -- Calling a stored procedure per row
+    
+    FETCH NEXT FROM EmailCursor INTO @Email;
+END;
+
+CLOSE EmailCursor;
+DEALLOCATE EmailCursor;
+💡 Alternative: If the SendEmailToCustomer procedure supports bulk operations, avoid the cursor and use INSERT INTO a queue table instead.
+
+#### Dynamic SQL Execution for Each Row
+Sometimes, you need to generate and execute SQL statements dynamically for each record.
+
+📌 Example: If you have a table with column names and need to generate ALTER TABLE statements dynamically.
+
+sql
+Copy
+Edit
+DECLARE @ColumnName NVARCHAR(255);
+
+DECLARE ColumnCursor CURSOR FOR 
+SELECT ColumnName FROM ColumnDefinitions WHERE NeedsIndex = 1;
+
+OPEN ColumnCursor;
+FETCH NEXT FROM ColumnCursor INTO @ColumnName;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    DECLARE @SQL NVARCHAR(MAX) = 'CREATE INDEX IX_' + @ColumnName + ' ON MyTable (' + @ColumnName + ')';
+    EXEC sp_executesql @SQL;
+
+    FETCH NEXT FROM ColumnCursor INTO @ColumnName;
+END;
+
+CLOSE ColumnCursor;
+DEALLOCATE ColumnCursor;
+💡 Alternative: If possible, generate all SQL statements in a single batch and execute them without looping.
+
+#### Performing Complex Calculations Across Rows
+If you need to calculate values across multiple rows dynamically where window functions (like ROW_NUMBER(), LAG(), LEAD(), or SUM() OVER()) are not feasible.
+
+📌 Example: You need to process payroll calculations with dependencies between previous rows
+
 
 ## 15. SQL Reusability 
 * -> Stored Procedure, Function (TVF, Scalar), View, CTE, Temp Table
@@ -337,6 +432,15 @@ WITH ActiveUsers AS (
     SELECT Id, Name, Email FROM Users WHERE IsActive = 1
 )
 SELECT * FROM ActiveUsers;
+```
+
+* -> **`Recursive CTE`** - **a CTE** that **`calls itself repeatedly`** until **a termination condition is met**
+* => useful for problems like **`Hierarchical data `**(_e.g., employees & managers, category trees_), **`Graph traversal`** (_e.g., finding shortest paths_), **`Generating sequences`** (_e.g., numbers, dates_)
+
+```sql
+-- SQL Server limits recursion to 100 levels by default
+-- to override it:
+OPTION (MAXRECURSION 200);
 ```
 
 ### Temporary Tables
