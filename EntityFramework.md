@@ -109,7 +109,7 @@ var orders = user.Orders; //The orders are loaded from the database at this poin
 
 * minimize the number of database round-trips (useful when we know we'll need the related data)
 * may **slow down performance** (**`memory usage`** and **`query execution time`**) when it come to a large or unnecessary of data fetching
-* may also cause a heavy generated SQL queries with **`multiple JOIN`** in ** or **`Cartesian explosion`** (duplicate data in the result set)
+* may also cause a heavy generated SQL queries with **`multiple JOIN`** in ** or **`Cartesian explosion`** (duplicate data in the result set) when eager loading multiple related entities
 ```cs
 var user = dbContext.Users.Include(u => u.Orders).FirstOrDefault(u => u.Id == 1);
 var orders = user.Orders;  // The orders are already loaded along with the user in a single query
