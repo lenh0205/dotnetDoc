@@ -97,7 +97,7 @@ public class Order
 * `Related entities` are loaded from the database **`on-demand`** when `accessed for the first time`
 
 * optimize performance by reducing the amount of data retrieved from the database upfront
-* may lead to additional database queries if not used carefully (lead to the N+1 problem)
+* may lead to additional database queries if not used carefully - lead to the **`N+1 problem`**
 ```cs
 var user = dbContext.Users.FirstOrDefault(u => u.Id == 1);
 var orders = user.Orders; //The orders are loaded from the database at this point
@@ -109,7 +109,8 @@ var orders = user.Orders; //The orders are loaded from the database at this poin
 
 * minimize the number of database round-trips (useful when we know we'll need the related data)
 * may **slow down performance** (**`memory usage`** and **`query execution time`**) when it come to a large or unnecessary of data fetching
-* also cause a heavy generated SQL queries with **`multiple JOIN`** and might lead to **`Cartesian explosion`** when eager loading multiple related entities (_because EF uses duplicate rows in the SQL result set to represent relationships and then reconstructs the objects correctly in memory_)
+* also cause a heavy generated SQL queries with **`multiple JOIN`** and might lead to **`Cartesian explosion`** when eager loading multiple related entities
+* (_this is because **`EF uses duplicate rows in the SQL result set to represent relationships`** and then reconstructs the objects correctly in memory_)
 ```cs
 var user = dbContext.Users.Include(u => u.Orders).FirstOrDefault(u => u.Id == 1);
 var orders = user.Orders;  // The orders are already loaded along with the user in a single query
@@ -155,6 +156,9 @@ foreach (var user in users)
 }
 ```
 
+### Cartesian Explosion
+* -> refers to a situation where the **number of combinations** in a Cartesian product **`grows exponentially`** (_cấp số nhân_), leading to performance issues
+* -> typically happens when **`multiple sets or tables are joined`** without proper filtering, causing an unmanageable number of rows in the result.
 
 ## 17. viết câu LINQ 1 cách tối ưu ?
 
