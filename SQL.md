@@ -325,12 +325,12 @@ DEALLOCATE EmployeeCursor;
 ### real-world scenarios
 
 #### Performing Row-by-Row Processing
-If you have business logic that must be applied to each row separately, and there's no efficient way to do it using a set-based operation.
-📌 Example: Sending emails to customers based on individual calculations.
 
-sql
-Copy
-Edit
+```sql
+-- if we have business logic that must be applied to each row separately, and there's no efficient way to do it using a set-based operation
+-- 📌 Example: Sending emails to customers based on individual calculations
+-- 💡 Alternative: If the SendEmailToCustomer procedure supports bulk operations, avoid the "cursor" and use INSERT INTO a queue table instead
+
 DECLARE @Email NVARCHAR(255);
 
 DECLARE EmailCursor CURSOR FOR 
@@ -348,16 +348,15 @@ END;
 
 CLOSE EmailCursor;
 DEALLOCATE EmailCursor;
-💡 Alternative: If the SendEmailToCustomer procedure supports bulk operations, avoid the cursor and use INSERT INTO a queue table instead.
+```
 
 #### Dynamic SQL Execution for Each Row
-Sometimes, you need to generate and execute SQL statements dynamically for each record.
 
-📌 Example: If you have a table with column names and need to generate ALTER TABLE statements dynamically.
+```sql
+-- sometimes, we need to generate and execute SQL statements dynamically for each record.
+-- 📌 Example: If you have a table with column names and need to generate ALTER TABLE statements dynamically
+-- 💡 Alternative: If possible, generate all SQL statements in a single batch and execute them without looping.
 
-sql
-Copy
-Edit
 DECLARE @ColumnName NVARCHAR(255);
 
 DECLARE ColumnCursor CURSOR FOR 
@@ -376,13 +375,13 @@ END;
 
 CLOSE ColumnCursor;
 DEALLOCATE ColumnCursor;
-💡 Alternative: If possible, generate all SQL statements in a single batch and execute them without looping.
+```
 
 #### Performing Complex Calculations Across Rows
-If you need to calculate values across multiple rows dynamically where window functions (like ROW_NUMBER(), LAG(), LEAD(), or SUM() OVER()) are not feasible.
-
-📌 Example: You need to process payroll calculations with dependencies between previous rows
-
+```sql
+-- If you need to calculate values across multiple rows dynamically where window functions (like ROW_NUMBER(), LAG(), LEAD(), or SUM() OVER()) are not feasible.
+-- 📌 Example: You need to process payroll calculations with dependencies between previous rows
+```
 
 ## 15. SQL Reusability 
 * -> Stored Procedure, Function (TVF, Scalar), View, CTE, Temp Table
