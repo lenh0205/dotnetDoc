@@ -105,9 +105,11 @@ var orders = user.Orders; //The orders are loaded from the database at this poin
 
 #### Eager Loading
 * `Related entities` are loaded from the database **`in a single query`** along with the main entity
-* By specifying the `navigation properties` to be included using the **`Include`** method or by using the Include extension method
+* By specifying the `navigation properties` to be included using the **`Include`** or **`.ThenInclude()`** method 
 
 * minimize the number of database round-trips (useful when we know we'll need the related data)
+* may **slow down performance** (**`memory usage`** and **`query execution time`**) when it come to a large or unnecessary of data fetching
+* may also cause a heavy generated SQL queries with **`multiple JOIN`** in ** or **`Cartesian explosion`** (duplicate data in the result set)
 ```cs
 var user = dbContext.Users.Include(u => u.Orders).FirstOrDefault(u => u.Id == 1);
 var orders = user.Orders;  // The orders are already loaded along with the user in a single query
