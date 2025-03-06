@@ -15,7 +15,7 @@
 * -> so in default case, 
 
 ```cs
-// ----------> Enable 'Lazy loading'
+// Enable 'Lazy loading':
 
 // -----> update DbContext
 using Microsoft.EntityFrameworkCore.Proxies; // install this NuGet package for lazy load proxy
@@ -138,22 +138,18 @@ foreach (var user in users)
 // each user in foreach loop, a separate database query will be executed to load the orders
 ```
 
-* fix with `Eager Loading`
+* fix with **`Eager Loading`**
 ```cs
-var users = dbContext.Users.Include(u => u.Orders).ToList();
-// ...
+var usersWithOrders = dbContext.Users.Include(u => u.Orders).ToList();
+foreach (var user in usersWithOrders)
+{
+    // user.Orders is already loaded
+}
 ```
 
-* fix with `Explicit loading` 
+* fix with **`Batch loading`** 
 ```cs
-var users = dbContext.Users.ToList();
-foreach (var user in users)
-{
-    // Explicitly load the orders for the current user
-    dbContext.Entry(user).Collection(u => u.Orders).Load();
-
-    // access "user.Orders" in here 
-}
+var usersWithOrders = dbContext.Users.Include(u => u.Orders).AsSplitQuery().ToList();
 ```
 
 ### Cartesian Explosion
