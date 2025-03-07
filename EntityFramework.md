@@ -11,27 +11,24 @@
 ## 9. Briefly present Lazy Loading, Eager Loading, Explicit Loading in Entity Framework
 
 ### Usage
-* -> In Entity Framework Core, **`lazy loading is disabled by default`**; to enable lazy loading, we need to use **`proxies`** and **`mark navigation properties as virtual`** 
-* -> so in default case, 
+* -> In Entity Framework Core, **`lazy loading is disabled by default`**;
+* => the simplest way to enable lazy loading is using **`proxies`** and **`mark navigation properties as "virtual"`**
+* => cách thứ 2 thì hơi lằng nhằng hơn là injecting the **`ILazyLoader`** service into an entity (https://learn.microsoft.com/en-us/ef/core/querying/related-data/lazy)
 
 ```cs
 // Enable 'Lazy loading':
 
 // -----> update DbContext
-using Microsoft.EntityFrameworkCore.Proxies; // install this NuGet package for lazy load proxy
-
-public class MyDbContext : DbContext
+// Cách 1:
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 {
-    public DbSet<Order> Orders { get; set; }
-    public DbSet<Customer> Customers { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder
-            .UseSqlServer("YourConnectionString")
-            .UseLazyLoadingProxies(); // Enable lazy loading
-    }
+    optionsBuilder
+        .UseSqlServer("YourConnectionString")
+        .UseLazyLoadingProxies(); // Enable lazy loading
 }
+// Cách 2:
+services.AddDbContext<BloggingContext>(
+    b => b.UseLazyLoadingProxies()
 
 // -----> Ensure navigation properties are 'virtual'
 public class Order
