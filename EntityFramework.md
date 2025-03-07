@@ -98,6 +98,14 @@ public class Order
 ```cs
 var user = dbContext.Users.FirstOrDefault(u => u.Id == 1);
 var orders = user.Orders; //The orders are loaded from the database at this point
+
+var invoices = db.Invoices
+    .ToList();
+// All invoices are already loaded...
+foreach (var invoice in invoices)
+{
+    Console.WriteLine(invoice.InvoiceLines.ToString()); // N+1 problem
+}
 ```
 
 #### Eager Loading
@@ -111,6 +119,11 @@ var orders = user.Orders; //The orders are loaded from the database at this poin
 ```cs
 var user = dbContext.Users.Include(u => u.Orders).FirstOrDefault(u => u.Id == 1);
 var orders = user.Orders;  // The orders are already loaded along with the user in a single query
+
+var invoices = dbContext.Invoices
+    .Include(invoice => invoice.InvoiceLines) // loading an "Invoice" and immediately bringing in a collection of "InvoiceLine"
+    .ThenInclude(invoiceLine => invoiceLine.Product) // possible to include navigational properties of InvoiceLine
+    .ToList();
 ```
 
 #### Explicit Loading: 
