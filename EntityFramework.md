@@ -91,20 +91,20 @@ public class Order
 ```
 
 #### Lazy Loading: 
-* `Related entities` are loaded from the database **`on-demand`** when `accessed for the first time`
+*  **related data** is loaded only **`when it is accessed for the first time`**
 
 * optimize performance by reducing the amount of data retrieved from the database upfront
 * may lead to additional database queries if not used carefully - lead to the **`N+1 problem`**
+* => nếu ta không cần related data ngay lập tức hoặc không sử dụng nó nhiều trong tương lại thì từ từ load nó cũng được (_nhưng nên disable Lazy loading rồi sử dụng Explicit loading thì tốt hơn_)
 ```cs
 var user = dbContext.Users.FirstOrDefault(u => u.Id == 1);
 var orders = user.Orders; //The orders are loaded from the database at this point
 
-var invoices = db.Invoices
-    .ToList();
-// All invoices are already loaded...
+var invoices = db.Invoices.ToList();
 foreach (var invoice in invoices)
 {
-    Console.WriteLine(invoice.InvoiceLines.ToString()); // N+1 problem
+    // cause N+1 problem
+    Console.WriteLine(invoice.InvoiceLines.ToString()); 
 }
 ```
 
@@ -116,6 +116,7 @@ foreach (var invoice in invoices)
 * may **slow down performance** (**`memory usage`** and **`query execution time`**) when it come to a large or unnecessary of data fetching
 * also cause a heavy generated SQL queries with **`multiple JOIN`** and might lead to **`Cartesian explosion`** when eager loading multiple related entities
 * (_this is because **`EF uses duplicate rows in the SQL result set to represent relationships`** and then reconstructs the objects correctly in memory_)
+* => typically more efficient when we need **`the related data for all retrieved rows`** of the primary table
 ```cs
 var user = dbContext.Users.Include(u => u.Orders).FirstOrDefault(u => u.Id == 1);
 var orders = user.Orders;  // The orders are already loaded along with the user in a single query
@@ -132,6 +133,8 @@ var invoices = dbContext.Invoices
 
 * useful for deferring the loading of certain related data until it is explicitly requested
 * _explicit ở đây tức là khi nào load thì hãy nói rõ bằng việc s/d method Load()_
+* => thường dùng khi ta áp tùy chọn để disable tính năng Lazyloading trong Entity Framework, từ đó ta muốn load related data thì phải explicit bằng Load()
+* (_còn Lazy loading là hành vi khi truy cập vào Property của Entity, nên nếu ta không để ý rất có thể sẽ query related data implicit và gây N+1 problem_)
 ```cs
 var user = dbContext.Users.FirstOrDefault(u => u.Id == 1);
 dbContext.Entry(user).Collection(u => u.Orders).Load();  // Explicitly load the orders for the user
