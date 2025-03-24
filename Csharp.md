@@ -304,7 +304,7 @@ var person = new Person("Alice", 25);
 Console.WriteLine(person.GetDetails()); // Alice is 25 years old.
 ```
 
-### 
+### OOP
 * -> **Inheritance** 
 ```cs
 public record Person(string Name, int Age);
