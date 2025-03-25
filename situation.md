@@ -41,7 +41,8 @@
 * -> Ultimately, by combining a structured debugging approach, reverse engineering, and utilizing debugging tools, I was able to successfully integrate the digital signature service into my project
 
 # how to catch up on new/big project? (how to transfer? how to get knowledge? what if have no good documentation...)
-- khi join 1 source code mới: summary about domain, business, technical; pull code to start project, debugger; work with small task; 
+- khi join 1 source code mới: summary about domain, business, technical; pull code to start project, debugger; xin làm small task để cactch up;
+- kiếm confluence, document nếu phải tự tìm hiểu
 
 # the main technologies your project uses? What are the common features your project includes?
 	
