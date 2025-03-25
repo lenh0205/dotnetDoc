@@ -34,6 +34,8 @@
 
 * **`Method overloading`** - having multiple methods with the same name but different parameters in the same class 
 * Method Overloading is not possible by only changing the return type of method -> Compile Time Error: method is already defined
+* => thiết nghĩ sẽ có ích khi ta có 2 cách truyền tham số khác nhau để cùng lấy ra được 1 tập dữ liệu nhất định
+
 ##### Runtime polymorphism
 * decision on which method to execute is made at runtime, when the method is called on an instance of the derived class (`based on the actual type of the object`)
 
