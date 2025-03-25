@@ -480,7 +480,7 @@ public interface IList : System.Collections.ICollection
 #### Implicitly typed arrays
 
 ### ArrayList (legacy)
-* -> giống **List<T>** nhưng **`no type-safety`** (các phần tử đều sẽ được lưu với kiểu là **`object`**)
+* -> giống **List<T>** nhưng **`no type-safety`**  because stores elements as **`object`** (add được nhiều type khác nhau, might mistakenly cast)
 * => required value type to be **boxed** into objects when added and **unboxed** when retrieved; leads to extra memory allocation and CPU overhead
 * => only use this in legacy codebases where refactoring to List<T> is not an option
 
@@ -554,8 +554,16 @@ Console.WriteLine(numbers.Contains(10)); // Still O(1), but element is not found
 Stack<string> history = new Stack<string>();
 history.Push("Page 1");
 history.Push("Page 2");
-
 Console.WriteLine(history.Pop()); // Output: Page 2 (last inserted item)
+
+Stack<int> stack = new Stack<int>();
+stack.Push(1);
+stack.Push(2);
+stack.Push(3);
+foreach (int item in stack)
+{
+    Console.WriteLine(item); // 3 2 1
+}
 ```
 
 ### Queue<T> 
@@ -568,23 +576,53 @@ Console.WriteLine(history.Pop()); // Output: Page 2 (last inserted item)
 Queue<string> tasks = new Queue<string>();
 tasks.Enqueue("Task 1");
 tasks.Enqueue("Task 2");
-
 Console.WriteLine(tasks.Dequeue()); // Output: Task 1 (first inserted item)
+
+Queue<int> queue = new Queue<int>();
+queue.Enqueue(1);
+queue.Enqueue(2);
+queue.Enqueue(3);
+foreach (int item in queue)
+{
+    Console.WriteLine(item); // 1 2 3
+}
 ```
 
 ### LinkedList - LinkedList<T> 
-* **`doubly linked list`** - each node has pointers to previous and next nodes
+* **`doubly linked list`** - each node has pointers to previous and next nodes (_traversal in both directions easy_)
 * _**fast insertions/removals** in the middle of the list (O(1) time complexity)_
-* _**slower lookups** compared to List<T> (O(n) time complexity)_
+* _**slower lookups** (O(n) time complexity compared to O(1) of List<T>) and **higher memory overhead** (extra reference to Next and Previos)_
 * => frequently insert/remove elements in the middle of the collection (_Ex:  Implementing a browser's back and forward navigation_)
 
 ```cs
-LinkedList<string> browsers = new LinkedList<string>();
-browsers.AddLast("Google Chrome");
-browsers.AddLast("Firefox");
-browsers.AddFirst("Edge");
+LinkedList<int> linkedList = new LinkedList<int>();
+linkedList.AddLast(1);
+linkedList.AddLast(3);
 
-Console.WriteLine(browsers.First.Value); // Output: Edge
+// Insert in the Middle
+LinkedListNode<int> node = linkedList.Find(1); // Get reference to node containing 1
+linkedList.AddAfter(node, 2); // Insert 2 after 1
+
+// Traversal
+foreach (int item in linkedList)
+{
+    Console.WriteLine(item); // 1 2 3
+}
+
+// Forward Traversal (Left to Right)
+while (node != null)
+{
+    Console.WriteLine(node.Value); // 1 2 3
+    node = node.Next; // Move to the next node
+}
+
+// Backward Traversal (Right to Left)
+node = list.Last; // Start from the last node
+while (node != null)
+{
+    Console.WriteLine(node.Value); // 3 2 1
+    node = node.Previous; // Move to the previous node
+}
 ```
 
 ### System.Collections.Concurrent
