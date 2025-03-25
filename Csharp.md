@@ -519,7 +519,7 @@ Console.WriteLine(employees[101]); // Output: Alice
 ### HashSet<T> 
 * an **`unordered`** collection of **`unique elements`**
 * provides **fast lookup** (O(1) time complexity)
-* => a collection with unique elements and fast lookup (_Ex: removing duplicates from a dataset, like storing unique product codes_)
+* _Ex: removing duplicates from a dataset, like storing unique product codes_
 
 ```cs
 HashSet<int> uniqueNumbers = new HashSet<int> { 1, 2, 3, 4 };
