@@ -536,8 +536,12 @@ foreach (string name in names)
 // convert HashSet to a List to access an element (if indexing is needed):
 HashSet<int> numbers = new HashSet<int> { 10, 20, 30, 40 };
 List<int> numberList = numbers.ToList();
-
 Console.WriteLine(numberList[1]); // Output: Could be 20, but order is not guaranteed
+
+// Fast lookup
+HashSet<int> numbers = new HashSet<int> { 1, 2, 3, 4, 5 };
+Console.WriteLine(numbers.Contains(3)); // O(1)
+Console.WriteLine(numbers.Contains(10)); // Still O(1), but element is not found
 ```
 
 ### Stack<T> 
