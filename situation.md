@@ -1,4 +1,5 @@
 # Introduce
+* Nice to meet you Joe,
 * I am a .NET developer with four years of experience in web development. 
 * While my primary focus is on backend technologies such as ASP.NET Core Web API, SQL Server, and Entity Framework, I also have a foundational understanding of frontend technologies like React and ASP.NET Core MVC.
 
